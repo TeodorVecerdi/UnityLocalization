@@ -168,3 +168,5 @@ Assets/Editor Default Resources/
 Assets/_theme.meta
 
 Assets/Editor Default Resources.meta
+
+*.DotSettings
