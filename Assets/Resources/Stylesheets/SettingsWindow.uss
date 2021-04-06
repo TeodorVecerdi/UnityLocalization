@@ -1,0 +1,21 @@
+.hidden {
+  display: none;
+}
+
+.header {
+  font-size: 24px;
+  margin-left: 8px;
+  margin-top: 6px;
+}
+
+.section-title {
+  font-size: 16px;
+  margin-left: 8px;
+  margin-top: 6px;
+}
+
+#ActiveSettings {
+  margin: 2px 8px 8px;
+}
+
+/*# sourceMappingURL=SettingsWindow.uss.map */

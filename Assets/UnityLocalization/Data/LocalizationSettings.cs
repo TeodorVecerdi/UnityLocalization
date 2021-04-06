@@ -28,6 +28,7 @@ namespace UnityLocalization.Data {
             foreach (var table in tables) {
                 table.OnLocaleAdded(locale);
             }
+            if(defaultLocale == null || string.IsNullOrEmpty(defaultLocale.LocaleCode)) SetDefaultLocale(locale);
         }
 
         public void RemoveLocale(Locale locale) {
@@ -48,7 +49,7 @@ namespace UnityLocalization.Data {
         }
 
         public Locale DefaultLocale => defaultLocale;
-        public IReadOnlyList<Locale> Locales => locales.AsReadOnly();
+        public List<Locale> Locales => locales;
         public bool HasLocale(Locale locale) => locales.Contains(locale);
         
         public bool TablesDirty {
