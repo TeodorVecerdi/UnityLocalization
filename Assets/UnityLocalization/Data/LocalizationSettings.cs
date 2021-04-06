@@ -6,7 +6,6 @@ using UnityEngine;
 namespace UnityLocalization.Data {
     [CreateAssetMenu(menuName = "Localization/Localization Settings", order = 0)]
     public class LocalizationSettings : ScriptableObject {
-
         [SerializeField] private bool tablesDirty;
         [SerializeField] private Locale defaultLocale; 
         [SerializeField] private List<Locale> locales = new List<Locale>();
@@ -43,8 +42,9 @@ namespace UnityLocalization.Data {
         }
 
         public void AddTable() {
-            var table = ScriptableObject.CreateInstance<LocalizationTable>();
+            var table = CreateInstance<LocalizationTable>();
             table.Initialize(locales);
+            tables.Add(table);
         }
 
         public Locale DefaultLocale => defaultLocale;
