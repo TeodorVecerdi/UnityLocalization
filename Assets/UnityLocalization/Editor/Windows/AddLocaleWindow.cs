@@ -9,10 +9,15 @@ using UnityLocalization.Utility;
 namespace UnityLocalization {
     public class AddLocaleWindow : EditorWindow {
         public static void Display(LocalizationSettingsWindow owner, LocalizationSettings settings) {
+            if (!EditorPrefs.HasKey(Constants.SHOW_SPECIFIC_LOCALES_PREFS_KEY)) {
+                EditorPrefs.SetBool(Constants.SHOW_SPECIFIC_LOCALES_PREFS_KEY, false);
+            }
+            
             var window = CreateInstance<AddLocaleWindow>();
             window.settings = settings;
             window.owner = owner;
             window.titleContent = new GUIContent("Add Locale");
+            window.showSpecificLocales = EditorPrefs.GetBool(Constants.SHOW_SPECIFIC_LOCALES_PREFS_KEY);
             window.Initialize();
             window.ShowModal();
         }
@@ -23,13 +28,25 @@ namespace UnityLocalization {
         private List<Locale> filteredLocales;
         private Vector2 scrollPosition;
         private string searchQuery = string.Empty;
+        private bool showSpecificLocales;
 
         private void Initialize() {
-            allLocales = Locale.GetAllLocales().ToList();
+            allLocales = Locale.GetAllLocales(showSpecificLocales);
             UpdateFilter();
         }
 
         private void OnGUI() {
+            EditorGUI.BeginChangeCheck();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Add Locale");
+            showSpecificLocales = GUILayout.Toggle(showSpecificLocales, "Show country/region specific locales?");
+            GUILayout.EndHorizontal();
+            if (EditorGUI.EndChangeCheck()) {
+                EditorPrefs.SetBool(Constants.SHOW_SPECIFIC_LOCALES_PREFS_KEY, showSpecificLocales);
+                allLocales = Locale.GetAllLocales(showSpecificLocales);
+                UpdateFilter();
+            }
+
             EditorGUI.BeginChangeCheck();
             searchQuery = GUILayout.TextField(searchQuery);
             if (string.IsNullOrEmpty(searchQuery)) {
