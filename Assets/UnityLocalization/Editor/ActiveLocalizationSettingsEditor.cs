@@ -11,7 +11,7 @@ namespace UnityLocalization {
     public class ActiveLocalizationSettingsEditor : Editor {
         private ActiveLocalizationSettings currentSettings;
 
-        public event Action OnActiveSettingsChanged;
+        public event Action<LocalizationSettings> OnActiveSettingsChanged;
 
         private VisualElement rootElement;
         private ObjectField activeSettingsField;
@@ -29,7 +29,7 @@ namespace UnityLocalization {
                 } else if (evt.previousValue != null && evt.newValue == null) {
                     createAssetContainer.RemoveFromClassList("hidden");
                 }
-                OnActiveSettingsChanged?.Invoke();
+                OnActiveSettingsChanged?.Invoke(evt.newValue as LocalizationSettings);
                 if (evt.newValue == null) {
                     EditorPrefs.DeleteKey(Constants.ACTIVE_SETTINGS_PREFS_KEY);
                 } else {

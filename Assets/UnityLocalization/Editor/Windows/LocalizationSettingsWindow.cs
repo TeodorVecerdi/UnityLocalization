@@ -42,7 +42,6 @@ namespace UnityLocalization {
             if (EditorPrefs.HasKey(Constants.ACTIVE_SETTINGS_PREFS_KEY)) {
                 activeSettings.ActiveSettings = AssetDatabase.LoadAssetAtPath<LocalizationSettings>(EditorPrefs.GetString(Constants.ACTIVE_SETTINGS_PREFS_KEY));
             }
-
             activeSettingsEditor = Editor.CreateEditor(activeSettings) as ActiveLocalizationSettingsEditor;
             activeSettingsEditor.OnActiveSettingsChanged += ActiveSettingsChanged;
             Undo.undoRedoPerformed += UndoRedoPerformed;
@@ -58,10 +57,13 @@ namespace UnityLocalization {
         [SerializeField] private string localeSearchQuery;
         [SerializeField] private Vector2 localeSearchScroll;
         [SerializeReference] private Locale selectedLocale;
-
+        private bool localeQueryChanged;
 #pragma warning disable 0414 // reason: used implicitly 
         [SerializeField] private bool localeFoldoutClosed = true;
 #pragma warning restore 0414
+
+        private VisualElement settingsContainer;
+        private Label defaultLocaleLabel;
 
         private void CreateGUI() {
             var header = new Label("Localization Settings") {name = "LocalizationTitle"};
@@ -70,22 +72,48 @@ namespace UnityLocalization {
             rootVisualElement.Add(header);
             rootVisualElement.Add(activeSettingsEditor.CreateInspectorGUI());
 
+            settingsContainer = new VisualElement {name = "SettingsContainer"};
+
             var localesFoldout = new Foldout {text = "Locales", name = "LocaleFoldout"};
             localesFoldout.AddToClassList("firstOfType");
+            localesFoldout.AddToClassList("themeLocale");
+            localesFoldout.AddToClassList("section-foldout");
             if (!localeFoldoutClosed) localesFoldout.AddToClassList("foldout-open");
             localesFoldout.BindProperty(new SerializedObject(this).FindProperty("localeFoldoutClosed"));
             localesFoldout.RegisterValueChangedCallback(evt => {
                 if (evt.newValue) localesFoldout.AddToClassList("foldout-open");
                 else localesFoldout.RemoveFromClassList("foldout-open");
             });
-            localesFoldout.AddToClassList("section-foldout");
+            defaultLocaleLabel = new Label {name = "DefaultLocale"};
+            UpdateDefaultLocaleLabel();
+            
+            var localesSearchField = new ToolbarSearchField {name = "LocalesSearchField", tooltip = "Search locales", value = localeSearchQuery};
+            localesSearchField.AddToClassList("searchField");
+            localesSearchField.AddToClassList("themeLocale");
+            var localesSearchPlaceholder = new Label("Search locales") {name = "LocalesSearchPlaceholder"};
+            if(!string.IsNullOrEmpty(localeSearchQuery)) localesSearchPlaceholder.AddToClassList("hidden"); 
+            var localesTextField = localesSearchField.Q<TextField>();
+            localesTextField[0].Add(localesSearchPlaceholder);
+            localesTextField.BindProperty(new SerializedObject(this).FindProperty("localeSearchQuery"));
+            localesTextField.RegisterValueChangedCallback(evt => {
+                if (string.IsNullOrEmpty(evt.newValue)) localesSearchPlaceholder.RemoveFromClassList("hidden");
+                else localesSearchPlaceholder.AddToClassList("hidden");
+                localeQueryChanged = true;
+            });
+            localesFoldout.Add(defaultLocaleLabel);
+            localesFoldout.Add(localesSearchField);
             localesFoldout.Add(new IMGUIContainer(OnLocalesGUI) {name = "LocaleEditor"});
             var checkmark = localesFoldout.Q<VisualElement>(className: "unity-toggle__checkmark");
             var opacity = checkmark.style.opacity;
             opacity.value = 5f;
             checkmark.style.opacity = opacity;
+            
+            var otherFoldout = new Foldout {text = "Other foldout", name = "OtherFoldout"};
+            otherFoldout.AddToClassList("section-foldout"); 
 
-            rootVisualElement.Add(localesFoldout);
+            settingsContainer.Add(localesFoldout);
+            settingsContainer.Add(otherFoldout);
+            rootVisualElement.Add(settingsContainer);
         }
 
         private void OnLocalesGUI() {
@@ -93,33 +121,12 @@ namespace UnityLocalization {
             if (settings == null) return;
             if (!stylesLoaded) LoadStyles();
 
-            var defaultLocale = settings.DefaultLocale;
-
-            // Draw default locale
-            GUILayout.BeginHorizontal(style_container);
-            GUILayout.Label("Default Locale: ", style_defaultLocale, GUILayout.ExpandWidth(false));
-            if (defaultLocale == null || string.IsNullOrEmpty(defaultLocale.LocaleCode)) {
-                GUILayout.Label("No default locale selected", style_defaultLocale_noLocale);
-            } else {
-                GUILayout.Label($"{defaultLocale.EnglishName} ({defaultLocale.NativeName})", style_defaultLocale);
+            if (localeQueryChanged) {
+                UpdateFilter();
+                localeQueryChanged = false;
             }
-
-            GUILayout.EndHorizontal();
+            
             GUILayout.BeginVertical(style_containerNoMarginTop);
-
-            EditorGUI.BeginChangeCheck();
-            localeSearchQuery = GUILayout.TextField(localeSearchQuery);
-            if (EditorGUI.EndChangeCheck()) UpdateFilter();
-            if (string.IsNullOrEmpty(localeSearchQuery)) {
-                var guiColor = GUI.color;
-                GUI.color = Color.grey;
-                var lastRect = GUILayoutUtility.GetLastRect();
-                lastRect.x += 4;
-                lastRect.width -= 4;
-                EditorGUI.LabelField(lastRect, "Search locales");
-                GUI.color = guiColor;
-            }
-
             localeSearchScroll = GUILayout.BeginScrollView(localeSearchScroll,
                                                            filteredLocales.Count * 40 >= 200 ? new[] {GUILayout.MaxHeight(200), GUILayout.MinHeight(0)} : new GUILayoutOption[0]);
             selectedLocale = GUILayoutExtras.Selection(selectedLocale, filteredLocales, (val, isSelected, index) => {
@@ -154,17 +161,22 @@ namespace UnityLocalization {
                 Utils.RecordChange(settings, "Set default locale");
                 settings.SetDefaultLocale(selectedLocale);
                 Utils.SaveChanges();
+                UpdateDefaultLocaleLabel();
             }
 
             GUI.enabled = true;
             GUILayout.EndHorizontal();
         }
 
-        private void ActiveSettingsChanged() {
-            if (activeSettings.ActiveSettings != null) {
-                filteredLocales = activeSettings.ActiveSettings.Locales;
-                UpdateFilter();
+        private void ActiveSettingsChanged(LocalizationSettings newSettings) {
+            if (newSettings != null) {
+                UpdateFilter(newSettings);
+                settingsContainer.RemoveFromClassList("hidden");
+                return;
             }
+
+            settingsContainer.AddToClassList("hidden");
+            
         }
 
         private void UndoRedoPerformed() {
@@ -172,21 +184,33 @@ namespace UnityLocalization {
             EditorUtility.SetDirty(this);
         }
 
-        public void UpdateFilter() {
-            if (activeSettings.ActiveSettings == null) {
+        private void UpdateDefaultLocaleLabel() {
+            var defaultLocale = activeSettings == null || activeSettings.ActiveSettings == null ? null : activeSettings.ActiveSettings.DefaultLocale;
+            
+            if (defaultLocale == null || string.IsNullOrEmpty(defaultLocale.LocaleCode)) {
+                defaultLocaleLabel.text = "Default Locale: No default locale selected";
+                defaultLocaleLabel.AddToClassList("no-locale");
+            } else {
+                defaultLocaleLabel.text = $"Default Locale: {defaultLocale.EnglishName} ({defaultLocale.NativeName})";
+                defaultLocaleLabel.RemoveFromClassList("no-locale");
+            }
+        }
+
+        public void UpdateFilter(LocalizationSettings newSettings = null) {
+            var settings = newSettings != null ? newSettings : activeSettings.ActiveSettings;
+            if (settings == null) {
                 filteredLocales = new List<Locale>();
                 return;
             }
 
             if (string.IsNullOrEmpty(localeSearchQuery)) {
-                filteredLocales = activeSettings.ActiveSettings.Locales.ToList();
+                filteredLocales = settings.Locales.ToList();
                 return;
             }
-
-            filteredLocales = activeSettings.ActiveSettings.Locales.Where(locale => locale.EnglishName.ToLowerInvariant().Contains(localeSearchQuery.ToLowerInvariant()) ||
-                                                                                    locale.NativeName.ToLowerInvariant().Contains(localeSearchQuery.ToLowerInvariant()) ||
-                                                                                    locale.LocaleCode.ToLowerInvariant().Contains(localeSearchQuery.ToLowerInvariant()))
-                                            .ToList();
+            filteredLocales = settings.Locales.Where(locale => locale.EnglishName.ToLowerInvariant().Contains(localeSearchQuery.ToLowerInvariant()) ||
+                                                               locale.NativeName.ToLowerInvariant().Contains(localeSearchQuery.ToLowerInvariant()) ||
+                                                               locale.LocaleCode.ToLowerInvariant().Contains(localeSearchQuery.ToLowerInvariant()))
+                                      .ToList();
         }
 
         private static void LoadStyles() {
@@ -219,7 +243,7 @@ namespace UnityLocalization {
         private static readonly GUIStyleDescription richText = new GUIStyleDescription {RichText = true};
         private static readonly GUIStyleDescription marginLeft8 = new GUIStyleDescription {Margin = new Int4 {left = 8}};
         private static readonly GUIStyleDescription paddingTop0 = new GUIStyleDescription {Padding = new Int4 {top = 0}};
-        private static readonly GUIStyleDescription padding8866 = new GUIStyleDescription {Padding = new Int4 {left = 10, right = 10, bottom = 6, top = 6}};
+        private static readonly GUIStyleDescription padding8866 = new GUIStyleDescription {Padding = new Int4 {left = 8, right = 10, bottom = 6, top = 6}};
         private static readonly GUIStyleDescription textCenter = new GUIStyleDescription {Alignment = TextAnchor.MiddleCenter};
     }
 }

@@ -18,9 +18,6 @@ MonoBehaviour:
     englishName: English
     nativeName: English
   locales:
-  - localeCode: en-AU
-    englishName: English (Australia)
-    nativeName: English (Australia)
   - localeCode: en-US
     englishName: English
     nativeName: English
