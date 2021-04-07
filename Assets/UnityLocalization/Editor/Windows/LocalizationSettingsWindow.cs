@@ -54,7 +54,7 @@ namespace UnityLocalization {
             Undo.undoRedoPerformed -= UndoRedoPerformed;
         }
 
-        [SerializeField] private List<Locale> filteredLocales; 
+        [SerializeField] private List<Locale> filteredLocales;
         [SerializeField] private string localeSearchQuery;
         [SerializeField] private Vector2 localeSearchScroll;
         [SerializeReference] private Locale selectedLocale;
@@ -62,6 +62,7 @@ namespace UnityLocalization {
 #pragma warning disable 0414 // reason: used implicitly 
         [SerializeField] private bool localeFoldoutClosed = true;
 #pragma warning restore 0414
+
         private void CreateGUI() {
             var header = new Label("Localization Settings") {name = "LocalizationTitle"};
             header.AddToClassList("header");
@@ -70,10 +71,11 @@ namespace UnityLocalization {
             rootVisualElement.Add(activeSettingsEditor.CreateInspectorGUI());
 
             var localesFoldout = new Foldout {text = "Locales", name = "LocaleFoldout"};
-            if(!localeFoldoutClosed) localesFoldout.AddToClassList("foldout-open");
+            localesFoldout.AddToClassList("firstOfType");
+            if (!localeFoldoutClosed) localesFoldout.AddToClassList("foldout-open");
             localesFoldout.BindProperty(new SerializedObject(this).FindProperty("localeFoldoutClosed"));
             localesFoldout.RegisterValueChangedCallback(evt => {
-                if(evt.newValue) localesFoldout.AddToClassList("foldout-open"); 
+                if (evt.newValue) localesFoldout.AddToClassList("foldout-open");
                 else localesFoldout.RemoveFromClassList("foldout-open");
             });
             localesFoldout.AddToClassList("section-foldout");
@@ -82,8 +84,8 @@ namespace UnityLocalization {
             var opacity = checkmark.style.opacity;
             opacity.value = 5f;
             checkmark.style.opacity = opacity;
-            
-            rootVisualElement.Add(localesFoldout); 
+
+            rootVisualElement.Add(localesFoldout);
         }
 
         private void OnLocalesGUI() {
@@ -156,9 +158,6 @@ namespace UnityLocalization {
 
             GUI.enabled = true;
             GUILayout.EndHorizontal();
-
-            // Draw locale search box
-            // Draw locales list
         }
 
         private void ActiveSettingsChanged() {

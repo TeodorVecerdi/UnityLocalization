@@ -19,6 +19,10 @@
 }
 
 Foldout.section-foldout {
+    &.firstOfType {
+        margin-top: 8px;
+    }
+    
     &#LocaleFoldout {
         --theme-color-rgb: rgb(255, 127, 80);
         --theme-color-rgba: rgba(255, 127, 80, 0.6);
@@ -30,31 +34,28 @@ Foldout.section-foldout {
     }
     
     &.foldout-open {
+        border-bottom-color: var(--theme-color-rgba);
+        border-bottom-width: 2px;
+        padding-bottom: 2px;
+        
         #unity-checkmark.unity-toggle__checkmark {
             &:hover, &:active, &:focus, &:enabled, &:active:hover, &:focus:hover, &:enabled:hover {
                 background-image: resource("TriangleDown");
-            }    
+            }
+        }
+        Label.unity-toggle__text {
         }
         &>Toggle.unity-foldout__toggle {
             border-bottom-width: 0;
+            padding-bottom: 0;
         }
-        border-bottom-color: var(--theme-color-rgba);
-        border-bottom-width: 2px;
     }
     #unity-checkmark.unity-toggle__checkmark {
         align-self: center;
-        opacity: 0;
         &:hover, &:active, &:focus, &:enabled, &:active:hover, &:focus:hover, &:enabled:hover {
             -unity-background-image-tint-color: var(--theme-color-rgb);
             -unity-background-scale-mode: scale-to-fit;
             background-image: resource("TriangleRight");
-        }
-
-        &.opacity-5 {
-            opacity: 5 !important;
-            &:hover, &:active, &:focus, &:enabled, &:active:hover, &:focus:hover, &:enabled:hover {
-                opacity: 5 !important;
-            }
         }
     }
     &>Toggle.unity-foldout__toggle {
@@ -65,8 +66,8 @@ Foldout.section-foldout {
         
         margin-left: 0;
         margin-right: 0;
-        padding-left: 2px;
-        padding-right: 2px;
+
+        padding: 2px;
     }
     Label.unity-toggle__text {
         font-size: 16px;

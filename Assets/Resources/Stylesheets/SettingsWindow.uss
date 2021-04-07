@@ -18,6 +18,9 @@
   margin: 2px 8px 8px;
 }
 
+Foldout.section-foldout.firstOfType {
+  margin-top: 8px;
+}
 Foldout.section-foldout#LocaleFoldout {
   --theme-color-rgb: rgb(255, 127, 80);
   --theme-color-rgba: rgba(255, 127, 80, 0.6);
@@ -29,27 +32,22 @@ Foldout.section-foldout#OtherFoldout {
 Foldout.section-foldout.foldout-open {
   border-bottom-color: var(--theme-color-rgba);
   border-bottom-width: 2px;
+  padding-bottom: 2px;
 }
 Foldout.section-foldout.foldout-open #unity-checkmark.unity-toggle__checkmark:hover, Foldout.section-foldout.foldout-open #unity-checkmark.unity-toggle__checkmark:active, Foldout.section-foldout.foldout-open #unity-checkmark.unity-toggle__checkmark:focus, Foldout.section-foldout.foldout-open #unity-checkmark.unity-toggle__checkmark:enabled, Foldout.section-foldout.foldout-open #unity-checkmark.unity-toggle__checkmark:active:hover, Foldout.section-foldout.foldout-open #unity-checkmark.unity-toggle__checkmark:focus:hover, Foldout.section-foldout.foldout-open #unity-checkmark.unity-toggle__checkmark:enabled:hover {
   background-image: resource("TriangleDown");
 }
 Foldout.section-foldout.foldout-open > Toggle.unity-foldout__toggle {
   border-bottom-width: 0;
+  padding-bottom: 0;
 }
 Foldout.section-foldout #unity-checkmark.unity-toggle__checkmark {
   align-self: center;
-  opacity: 0;
 }
 Foldout.section-foldout #unity-checkmark.unity-toggle__checkmark:hover, Foldout.section-foldout #unity-checkmark.unity-toggle__checkmark:active, Foldout.section-foldout #unity-checkmark.unity-toggle__checkmark:focus, Foldout.section-foldout #unity-checkmark.unity-toggle__checkmark:enabled, Foldout.section-foldout #unity-checkmark.unity-toggle__checkmark:active:hover, Foldout.section-foldout #unity-checkmark.unity-toggle__checkmark:focus:hover, Foldout.section-foldout #unity-checkmark.unity-toggle__checkmark:enabled:hover {
   -unity-background-image-tint-color: var(--theme-color-rgb);
   -unity-background-scale-mode: scale-to-fit;
   background-image: resource("TriangleRight");
-}
-Foldout.section-foldout #unity-checkmark.unity-toggle__checkmark.opacity-5 {
-  opacity: 5 !important;
-}
-Foldout.section-foldout #unity-checkmark.unity-toggle__checkmark.opacity-5:hover, Foldout.section-foldout #unity-checkmark.unity-toggle__checkmark.opacity-5:active, Foldout.section-foldout #unity-checkmark.unity-toggle__checkmark.opacity-5:focus, Foldout.section-foldout #unity-checkmark.unity-toggle__checkmark.opacity-5:enabled, Foldout.section-foldout #unity-checkmark.unity-toggle__checkmark.opacity-5:active:hover, Foldout.section-foldout #unity-checkmark.unity-toggle__checkmark.opacity-5:focus:hover, Foldout.section-foldout #unity-checkmark.unity-toggle__checkmark.opacity-5:enabled:hover {
-  opacity: 5 !important;
 }
 Foldout.section-foldout > Toggle.unity-foldout__toggle {
   border-top-color: var(--theme-color-rgb);
@@ -58,8 +56,7 @@ Foldout.section-foldout > Toggle.unity-foldout__toggle {
   border-bottom-width: 2px;
   margin-left: 0;
   margin-right: 0;
-  padding-left: 2px;
-  padding-right: 2px;
+  padding: 2px;
 }
 Foldout.section-foldout Label.unity-toggle__text {
   font-size: 16px;
