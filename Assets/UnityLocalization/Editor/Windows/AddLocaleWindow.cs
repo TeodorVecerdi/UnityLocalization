@@ -25,8 +25,8 @@ namespace UnityLocalization {
         private string searchQuery = string.Empty;
 
         private void Initialize() {
-            allLocales = Locale.GetAllLocales().Where(locale => !settings.HasLocale(locale)).ToList();
-            filteredLocales = allLocales.ToList();
+            allLocales = Locale.GetAllLocales().ToList();
+            UpdateFilter();
         }
 
         private void OnGUI() {
@@ -42,10 +42,7 @@ namespace UnityLocalization {
                 GUI.color = guiColor;
             }
             if (EditorGUI.EndChangeCheck()) {
-                filteredLocales = allLocales.Where(locale => locale.EnglishName.ToLowerInvariant().Contains(searchQuery.ToLowerInvariant()) ||
-                                                             locale.NativeName.ToLowerInvariant().Contains(searchQuery.ToLowerInvariant()) ||
-                                                             locale.LocaleCode.ToLowerInvariant().Contains(searchQuery.ToLowerInvariant()))
-                                            .ToList();
+                UpdateFilter();
             }
 
             scrollPosition = GUILayout.BeginScrollView(scrollPosition);
@@ -61,14 +58,20 @@ namespace UnityLocalization {
                     Utils.RecordChange(settings, "Added locale");
                     settings.AddLocale(locale);
                     Utils.SaveChanges();
-                    Close();
                     owner.UpdateFilter();
+                    UpdateFilter();
                 }
 
                 GUILayout.EndHorizontal();
             }
 
             GUILayout.EndScrollView();
+        }
+
+        private void UpdateFilter() {
+            filteredLocales = allLocales.Where(locale => !settings.HasLocale(locale) && (locale.EnglishName.ToLowerInvariant().Contains(searchQuery.ToLowerInvariant()) ||
+                                                         locale.NativeName.ToLowerInvariant().Contains(searchQuery.ToLowerInvariant()) ||
+                                                         locale.LocaleCode.ToLowerInvariant().Contains(searchQuery.ToLowerInvariant()))).ToList();
         }
     }
 }
