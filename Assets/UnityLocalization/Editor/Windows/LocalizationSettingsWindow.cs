@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 using UnityLocalization.Data;
 using UnityLocalization.Utility;
@@ -56,22 +57,32 @@ namespace UnityLocalization {
         [SerializeField] private List<Locale> filteredLocales; 
         [SerializeField] private string localeSearchQuery;
         [SerializeField] private Vector2 localeSearchScroll;
-        [SerializeField] private Locale selectedLocale;
+        [SerializeReference] private Locale selectedLocale;
 
-#pragma warning disable 0414 // used implicitly
-        [SerializeField] private bool localeFoldoutExpanded = true;
+#pragma warning disable 0414 // reason: used implicitly 
+        [SerializeField] private bool localeFoldoutClosed = true;
 #pragma warning restore 0414
         private void CreateGUI() {
-            var header = new Label("Localization Settings");
+            var header = new Label("Localization Settings") {name = "LocalizationTitle"};
             header.AddToClassList("header");
 
             rootVisualElement.Add(header);
             rootVisualElement.Add(activeSettingsEditor.CreateInspectorGUI());
 
-            var localesFoldout = new Foldout() {text = "Locales"};
-            localesFoldout.BindProperty(new SerializedObject(this).FindProperty("localeFoldoutExpanded"));
+            var localesFoldout = new Foldout {text = "Locales", name = "LocaleFoldout"};
+            if(!localeFoldoutClosed) localesFoldout.AddToClassList("foldout-open");
+            localesFoldout.BindProperty(new SerializedObject(this).FindProperty("localeFoldoutClosed"));
+            localesFoldout.RegisterValueChangedCallback(evt => {
+                if(evt.newValue) localesFoldout.AddToClassList("foldout-open"); 
+                else localesFoldout.RemoveFromClassList("foldout-open");
+            });
             localesFoldout.AddToClassList("section-foldout");
-            localesFoldout.Add(new IMGUIContainer(OnLocalesGUI));
+            localesFoldout.Add(new IMGUIContainer(OnLocalesGUI) {name = "LocaleEditor"});
+            var checkmark = localesFoldout.Q<VisualElement>(className: "unity-toggle__checkmark");
+            var opacity = checkmark.style.opacity;
+            opacity.value = 5f;
+            checkmark.style.opacity = opacity;
+            
             rootVisualElement.Add(localesFoldout); 
         }
 
@@ -128,14 +139,13 @@ namespace UnityLocalization {
                 AddLocaleWindow.Display(this, activeSettings.ActiveSettings);
             }
 
-            GUI.enabled = selectedLocale != null;
-            if (settings.DefaultLocale.Equals(selectedLocale)) GUI.enabled = false;
+            if (selectedLocale == null || settings.DefaultLocale.Equals(selectedLocale)) GUI.enabled = false;
             if (GUILayout.Button("Remove Selected", GUILayout.Height(30))) {
                 Utils.RecordChange(settings, "Removed locale");
                 settings.RemoveLocale(selectedLocale);
                 Utils.SaveChanges();
-                UpdateFilter();
                 selectedLocale = null;
+                UpdateFilter();
             }
 
             if (GUILayout.Button("Make Selected Default", GUILayout.Height(30))) {
