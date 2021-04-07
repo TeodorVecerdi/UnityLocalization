@@ -201,7 +201,7 @@ namespace UnityLocalization {
             style_container = GUIStyleDescription.Combine(padding8866);
             style_containerNoMarginTop = GUIStyleDescription.Combine(padding8866, !paddingTop0);
             style_redCenterMiddleLabel = GUIStyleDescription.Combine(baseLabel, !textRed, !textCenter);
-            style_localeSelectionEntryLabel = GUIStyleDescription.Combine(baseLabel, !textCenter);
+            style_localeSelectionEntryLabel = GUIStyleDescription.Combine(baseLabel, !richText, !textCenter);
             style_localeSelectionEntryButton = new GUIStyle(EditorStyles.toolbarButton) {fixedHeight = 0};
             stylesLoaded = true;
         }
@@ -216,8 +216,8 @@ namespace UnityLocalization {
         private static GUIStyle style_localeSelectionEntryButton;
 
         private static GUIStyleDescription baseLabel;
-        private static GUIStyleDescription toolbarButton;
         private static readonly GUIStyleDescription textRed = new GUIStyleDescription {TextColor = Color.red};
+        private static readonly GUIStyleDescription richText = new GUIStyleDescription {RichText = true};
         private static readonly GUIStyleDescription marginLeft8 = new GUIStyleDescription {Margin = new Int4 {left = 8}};
         private static readonly GUIStyleDescription paddingTop0 = new GUIStyleDescription {Padding = new Int4 {top = 0}};
         private static readonly GUIStyleDescription padding8866 = new GUIStyleDescription {Padding = new Int4 {left = 10, right = 10, bottom = 6, top = 6}};
