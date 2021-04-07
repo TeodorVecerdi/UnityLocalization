@@ -17,3 +17,13 @@
 #ActiveSettings {
     margin: 2px 8px 8px;
 }
+
+Foldout.section-foldout {
+    Label.unity-toggle__text {
+        font-size: 16px;
+        margin-left: 4px;
+    }
+    #unity-checkmark.unity-toggle__checkmark {
+        align-self: center;
+    }
+}

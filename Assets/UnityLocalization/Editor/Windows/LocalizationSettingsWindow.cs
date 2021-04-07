@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -12,14 +13,18 @@ namespace UnityLocalization {
     public class LocalizationSettingsWindow : EditorWindow {
         private ActiveLocalizationSettings activeSettings;
         private ActiveLocalizationSettingsEditor activeSettingsEditor;
-        
+
         [UnityEditor.Callbacks.DidReloadScripts]
         private static void Initialize() {
-            if(!HasOpenInstances<LocalizationSettingsWindow>()) return;
-            
+            if (!HasOpenInstances<LocalizationSettingsWindow>()) return;
+
             var window = GetWindow<LocalizationSettingsWindow>();
             var stylesheet = Resources.Load<StyleSheet>("Stylesheets/SettingsWindow");
-            if(!window.rootVisualElement.styleSheets.Contains(stylesheet)) window.rootVisualElement.styleSheets.Add(stylesheet);
+            try {
+                if (!window.rootVisualElement.styleSheets.Contains(stylesheet)) window.rootVisualElement.styleSheets.Add(stylesheet);
+            } catch (Exception e) {
+                Debug.LogException(e);
+            }
         }
 
         [MenuItem("Localization/Settings Editor")]
@@ -27,7 +32,7 @@ namespace UnityLocalization {
             var window = GetWindow<LocalizationSettingsWindow>(typeof(Editor).Assembly.GetType("UnityEditor.InspectorWindow"));
             window.titleContent = new GUIContent("Localization Settings");
             window.Show();
-            
+
             Initialize();
         }
 
@@ -36,6 +41,7 @@ namespace UnityLocalization {
             if (EditorPrefs.HasKey(Constants.ACTIVE_SETTINGS_PREFS_KEY)) {
                 activeSettings.ActiveSettings = AssetDatabase.LoadAssetAtPath<LocalizationSettings>(EditorPrefs.GetString(Constants.ACTIVE_SETTINGS_PREFS_KEY));
             }
+
             activeSettingsEditor = Editor.CreateEditor(activeSettings) as ActiveLocalizationSettingsEditor;
             activeSettingsEditor.OnActiveSettingsChanged += ActiveSettingsChanged;
             Undo.undoRedoPerformed += UndoRedoPerformed;
@@ -47,22 +53,26 @@ namespace UnityLocalization {
             Undo.undoRedoPerformed -= UndoRedoPerformed;
         }
 
-        [SerializeField] private List<Locale> filteredLocales;
+        [SerializeField] private List<Locale> filteredLocales; 
         [SerializeField] private string localeSearchQuery;
         [SerializeField] private Vector2 localeSearchScroll;
         [SerializeField] private Locale selectedLocale;
 
+#pragma warning disable 0414 // used implicitly
+        [SerializeField] private bool localeFoldoutExpanded = true;
+#pragma warning restore 0414
         private void CreateGUI() {
             var header = new Label("Localization Settings");
             header.AddToClassList("header");
 
-            rootVisualElement.Add(header); 
+            rootVisualElement.Add(header);
             rootVisualElement.Add(activeSettingsEditor.CreateInspectorGUI());
 
-            var localesTitle = new Label("Locales");
-            localesTitle.AddToClassList("section-title");
-            rootVisualElement.Add(localesTitle);
-            rootVisualElement.Add(new IMGUIContainer(OnLocalesGUI));
+            var localesFoldout = new Foldout() {text = "Locales"};
+            localesFoldout.BindProperty(new SerializedObject(this).FindProperty("localeFoldoutExpanded"));
+            localesFoldout.AddToClassList("section-foldout");
+            localesFoldout.Add(new IMGUIContainer(OnLocalesGUI));
+            rootVisualElement.Add(localesFoldout); 
         }
 
         private void OnLocalesGUI() {
@@ -86,7 +96,7 @@ namespace UnityLocalization {
 
             EditorGUI.BeginChangeCheck();
             localeSearchQuery = GUILayout.TextField(localeSearchQuery);
-            if(EditorGUI.EndChangeCheck()) UpdateFilter();
+            if (EditorGUI.EndChangeCheck()) UpdateFilter();
             if (string.IsNullOrEmpty(localeSearchQuery)) {
                 var guiColor = GUI.color;
                 GUI.color = Color.grey;
@@ -158,6 +168,7 @@ namespace UnityLocalization {
                 filteredLocales = new List<Locale>();
                 return;
             }
+
             if (string.IsNullOrEmpty(localeSearchQuery)) {
                 filteredLocales = activeSettings.ActiveSettings.Locales.ToList();
                 return;
