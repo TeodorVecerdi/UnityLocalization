@@ -21,13 +21,20 @@ namespace UnityLocalization.Data {
             this.nativeName = nativeName;
         }
 
-        public static Locale CreateFromSystemLocale(CultureInfo culture) {
-            return new Locale(culture.Name, culture.EnglishName, culture.NativeName);
+        public static Locale CreateFromCultureInfo(CultureInfo culture) {
+            string cultureName;
+            try {
+                cultureName = CultureInfo.CreateSpecificCulture(culture.Name).Name;
+            } catch {
+                cultureName = culture.Name;
+            }
+
+            return new Locale(cultureName, culture.EnglishName, culture.NativeName);
         }
 
-        public static List<Locale> GetAllLocales() {
-            var languages = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
-            return languages.Where(l => !string.IsNullOrEmpty(l.Name)).Select(CreateFromSystemLocale).ToList();
+        public static List<Locale> GetAllLocales(bool extended) {
+            return CultureInfo.GetCultures(extended ? CultureTypes.SpecificCultures : CultureTypes.NeutralCultures)
+                              .Where(l => !string.IsNullOrEmpty(l.Name)).Select(CreateFromCultureInfo).ToList();
         }
 
         #region Equality Methods
