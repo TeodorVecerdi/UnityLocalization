@@ -12,13 +12,23 @@ namespace UnityLocalization {
     public class LocalizationSettingsWindow : EditorWindow {
         private ActiveLocalizationSettings activeSettings;
         private ActiveLocalizationSettingsEditor activeSettingsEditor;
+        
+        [UnityEditor.Callbacks.DidReloadScripts]
+        private static void Initialize() {
+            if(!HasOpenInstances<LocalizationSettingsWindow>()) return;
+            
+            var window = GetWindow<LocalizationSettingsWindow>();
+            var stylesheet = Resources.Load<StyleSheet>("Stylesheets/SettingsWindow");
+            if(!window.rootVisualElement.styleSheets.Contains(stylesheet)) window.rootVisualElement.styleSheets.Add(stylesheet);
+        }
 
         [MenuItem("Localization/Settings Editor")]
         private static void ShowWindow() {
             var window = GetWindow<LocalizationSettingsWindow>(typeof(Editor).Assembly.GetType("UnityEditor.InspectorWindow"));
             window.titleContent = new GUIContent("Localization Settings");
             window.Show();
-            window.rootVisualElement.styleSheets.Add(Resources.Load<StyleSheet>("Stylesheets/SettingsWindow"));
+            
+            Initialize();
         }
 
         private void OnEnable() {
@@ -29,11 +39,7 @@ namespace UnityLocalization {
             activeSettingsEditor = Editor.CreateEditor(activeSettings) as ActiveLocalizationSettingsEditor;
             activeSettingsEditor.OnActiveSettingsChanged += ActiveSettingsChanged;
             Undo.undoRedoPerformed += UndoRedoPerformed;
-            if (activeSettings.ActiveSettings != null) {
-                filteredLocales = activeSettings.ActiveSettings.Locales.ToList();
-            } else {
-                filteredLocales = new List<Locale>();
-            }
+            UpdateFilter();
         }
 
         private void OnDisable() {
@@ -41,21 +47,16 @@ namespace UnityLocalization {
             Undo.undoRedoPerformed -= UndoRedoPerformed;
         }
 
-        private List<Locale> filteredLocales;
-        private string localeSearchQuery;
-        private Vector2 localeSearchScroll;
-        private Locale selectedLocale = null;
+        [SerializeField] private List<Locale> filteredLocales;
+        [SerializeField] private string localeSearchQuery;
+        [SerializeField] private Vector2 localeSearchScroll;
+        [SerializeField] private Locale selectedLocale;
 
         private void CreateGUI() {
-            rootVisualElement.Add(new Button(() => {
-                Close();
-                ShowWindow();
-            }) {text = "Reset"});
-
             var header = new Label("Localization Settings");
             header.AddToClassList("header");
 
-            rootVisualElement.Add(header);
+            rootVisualElement.Add(header); 
             rootVisualElement.Add(activeSettingsEditor.CreateInspectorGUI());
 
             var localesTitle = new Label("Locales");
