@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 namespace UnityLocalization.Data {
@@ -14,7 +13,6 @@ namespace UnityLocalization.Data {
         public void SetDefaultLocale(Locale locale) {
             if(defaultLocale.Equals(locale)) return;
             if (!locales.Contains(locale)) throw new InvalidOperationException("The specified locale is not part of this Localization Settings");
-            
             var oldDefaultLocale = defaultLocale;
             defaultLocale = locale;
             foreach (var table in tables) {
@@ -46,6 +44,10 @@ namespace UnityLocalization.Data {
             var table = CreateInstance<LocalizationTable>();
             table.Initialize(locales);
             tables.Add(table);
+        }
+
+        public void RemoveTable(LocalizationTable table) {
+            tables.Remove(table);
         }
 
         public Locale DefaultLocale => defaultLocale;

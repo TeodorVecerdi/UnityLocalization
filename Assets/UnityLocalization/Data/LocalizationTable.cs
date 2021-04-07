@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UnityLocalization.Data {
     [CreateAssetMenu(menuName = "Localization/Localization Table", order = 1)]
-    internal class LocalizationTable : ScriptableObject {
+    public class LocalizationTable : ScriptableObject {
         [SerializeField] private Table table;
 
         internal void Initialize(List<Locale> locales) {

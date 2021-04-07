@@ -31,11 +31,9 @@ namespace UnityLocalization {
                 }
                 OnActiveSettingsChanged?.Invoke();
                 if (evt.newValue == null) {
-                    Debug.Log("Deleted editorPrefs key for active settings");
                     EditorPrefs.DeleteKey(Constants.ACTIVE_SETTINGS_PREFS_KEY);
                 } else {
                     var assetPath = AssetDatabase.GetAssetPath(evt.newValue);
-                    Debug.Log($"Set editorPrefs key for active settings to '{assetPath}'");
                     EditorPrefs.SetString(Constants.ACTIVE_SETTINGS_PREFS_KEY, assetPath);
                 }
             });

@@ -28,6 +28,7 @@ namespace UnityLocalization {
             }
             activeSettingsEditor = Editor.CreateEditor(activeSettings) as ActiveLocalizationSettingsEditor;
             activeSettingsEditor.OnActiveSettingsChanged += ActiveSettingsChanged;
+            Undo.undoRedoPerformed += UndoRedoPerformed;
             if (activeSettings.ActiveSettings != null) {
                 filteredLocales = activeSettings.ActiveSettings.Locales.ToList();
             } else {
@@ -37,6 +38,7 @@ namespace UnityLocalization {
 
         private void OnDisable() {
             activeSettingsEditor.OnActiveSettingsChanged -= ActiveSettingsChanged;
+            Undo.undoRedoPerformed -= UndoRedoPerformed;
         }
 
         private List<Locale> filteredLocales;
@@ -118,13 +120,17 @@ namespace UnityLocalization {
             GUI.enabled = selectedLocale != null;
             if (settings.DefaultLocale.Equals(selectedLocale)) GUI.enabled = false;
             if (GUILayout.Button("Remove Selected", GUILayout.Height(30))) {
+                Utils.RecordChange(settings, "Removed locale");
                 settings.RemoveLocale(selectedLocale);
+                Utils.SaveChanges();
                 UpdateFilter();
                 selectedLocale = null;
             }
 
             if (GUILayout.Button("Make Selected Default", GUILayout.Height(30))) {
+                Utils.RecordChange(settings, "Set default locale");
                 settings.SetDefaultLocale(selectedLocale);
+                Utils.SaveChanges();
             }
 
             GUI.enabled = true;
@@ -141,7 +147,16 @@ namespace UnityLocalization {
             }
         }
 
+        private void UndoRedoPerformed() {
+            UpdateFilter();
+            EditorUtility.SetDirty(this);
+        }
+
         public void UpdateFilter() {
+            if (activeSettings.ActiveSettings == null) {
+                filteredLocales = new List<Locale>();
+                return;
+            }
             if (string.IsNullOrEmpty(localeSearchQuery)) {
                 filteredLocales = activeSettings.ActiveSettings.Locales.ToList();
                 return;

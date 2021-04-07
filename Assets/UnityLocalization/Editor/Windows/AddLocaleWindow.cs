@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityLocalization.Data;
+using UnityLocalization.Utility;
 
 namespace UnityLocalization {
     public class AddLocaleWindow : EditorWindow {
@@ -57,7 +58,9 @@ namespace UnityLocalization {
                 GUILayout.Label($"{locale.EnglishName} ({locale.NativeName}) - {locale.LocaleCode}");
                 GUILayout.FlexibleSpace();
                 if (GUILayout.Button("Add", GUILayout.MinWidth(100))) {
+                    Utils.RecordChange(settings, "Added locale");
                     settings.AddLocale(locale);
+                    Utils.SaveChanges();
                     Close();
                     owner.UpdateFilter();
                 }
