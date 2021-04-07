@@ -4,6 +4,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityLocalization.Data;
+using UnityLocalization.Utility;
 
 namespace UnityLocalization {
     [CustomEditor(typeof(ActiveLocalizationSettings))]
@@ -29,6 +30,14 @@ namespace UnityLocalization {
                     createAssetContainer.RemoveFromClassList("hidden");
                 }
                 OnActiveSettingsChanged?.Invoke();
+                if (evt.newValue == null) {
+                    Debug.Log("Deleted editorPrefs key for active settings");
+                    EditorPrefs.DeleteKey(Constants.ACTIVE_SETTINGS_PREFS_KEY);
+                } else {
+                    var assetPath = AssetDatabase.GetAssetPath(evt.newValue);
+                    Debug.Log($"Set editorPrefs key for active settings to '{assetPath}'");
+                    EditorPrefs.SetString(Constants.ACTIVE_SETTINGS_PREFS_KEY, assetPath);
+                }
             });
             createAssetContainer = new VisualElement();
             createAssetContainer.Add(new HelpBox("There is no active Localization Settings selected. Would you like to create one?", HelpBoxMessageType.Info));
@@ -44,24 +53,19 @@ namespace UnityLocalization {
 
         private void TriggerCreateAsset() {
             var savePath = EditorUtility.SaveFilePanel("Create Localization Settings", Application.dataPath, "Localization Settings", "asset");
-            if (string.IsNullOrEmpty(savePath)) {
-                Debug.Log("Did not create asset");
+            if (string.IsNullOrEmpty(savePath))
                 return;
-            }
 
             if (!savePath.StartsWith(Application.dataPath)) {
-                EditorUtility.DisplayDialog("Invalid location!", "The location specified is not valid. You should create the localization settings in your assets folder.",
-                                            "Close");
+                EditorUtility.DisplayDialog("Invalid location!", "The location specified is not valid. You should create the localization settings in your assets folder.", "Close");
                 return;
             }
 
             var cleanPath = savePath.Substring(Application.dataPath.LastIndexOf('/') + 1);
-            Debug.Log($"Cleaned path: {cleanPath}");
             var instance = CreateInstance<LocalizationSettings>();
             AssetDatabase.CreateAsset(instance, cleanPath);
             AssetDatabase.ImportAsset(cleanPath, ImportAssetOptions.ForceUpdate);
             currentSettings.ActiveSettings = instance;
-            Debug.Log($"Created asset at path {savePath}");
         }
     }
 }
