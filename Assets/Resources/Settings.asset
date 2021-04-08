@@ -24,4 +24,9 @@ MonoBehaviour:
   - localeCode: en-GB
     englishName: English (United Kingdom)
     nativeName: English (United Kingdom)
-  tables: []
+  - localeCode: ar-SA
+    englishName: Arabic (Saudi Arabia)
+    nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629 (\u0627\u0644\u0645\u0645\u0644\u0643\u0629
+      \u0627\u0644\u0639\u0631\u0628\u064A\u0629 \u0627\u0644\u0633\u0639\u0648\u062F\u064A\u0629)"
+  tables:
+  - {fileID: 11400000, guid: 2a432723459da42498fa0e0256ccee32, type: 2}

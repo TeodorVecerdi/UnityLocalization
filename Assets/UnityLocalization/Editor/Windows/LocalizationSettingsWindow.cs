@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 using UnityLocalization.Data;
@@ -20,8 +21,10 @@ namespace UnityLocalization {
             if (!HasOpenInstances<LocalizationSettingsWindow>()) return;
 
             var window = GetWindow<LocalizationSettingsWindow>();
+            var utilityStylesheet = Resources.Load<StyleSheet>("Stylesheets/Utility");
             var stylesheet = Resources.Load<StyleSheet>("Stylesheets/SettingsWindow");
             try {
+                window.rootVisualElement.styleSheets.Add(utilityStylesheet);
                 window.rootVisualElement.styleSheets.Add(stylesheet);
             } catch {
                 window.deferStylesheetLoading = true;
@@ -60,7 +63,8 @@ namespace UnityLocalization {
         [SerializeReference] private Locale selectedLocale;
         private bool localeQueryChanged;
 #pragma warning disable 0414 // reason: used implicitly 
-        [SerializeField] private bool localeFoldoutClosed = true;
+        [SerializeField] private bool localeFoldoutClosed;
+        [SerializeField] private bool tablesFoldoutClosed;
 #pragma warning restore 0414
         private bool deferStylesheetLoading;
 
@@ -74,7 +78,9 @@ namespace UnityLocalization {
             }
 
             if (deferStylesheetLoading) {
+                var utilityStylesheet = Resources.Load<StyleSheet>("Stylesheets/Utility");
                 var stylesheet = Resources.Load<StyleSheet>("Stylesheets/SettingsWindow");
+                rootVisualElement.styleSheets.Add(utilityStylesheet);
                 rootVisualElement.styleSheets.Add(stylesheet);
                 deferStylesheetLoading = false;
             }
@@ -87,6 +93,15 @@ namespace UnityLocalization {
 
             settingsContainer = new VisualElement {name = "SettingsContainer"};
 
+            var localesFoldout = CreateLocalesFoldout();
+            var tablesFoldout = CreateTablesFoldout();
+
+            settingsContainer.Add(localesFoldout);
+            settingsContainer.Add(tablesFoldout);
+            rootVisualElement.Add(settingsContainer);
+        }
+
+        private Foldout CreateLocalesFoldout() {
             var localesFoldout = new Foldout {text = "Locales", name = "LocaleFoldout"};
             localesFoldout.AddToClassList("firstOfType");
             localesFoldout.AddToClassList("themeLocale");
@@ -120,13 +135,25 @@ namespace UnityLocalization {
             var opacity = checkmark.style.opacity;
             opacity.value = 5f;
             checkmark.style.opacity = opacity;
+            return localesFoldout;
+        }
 
-            var otherFoldout = new Foldout {text = "Other foldout", name = "OtherFoldout"};
-            otherFoldout.AddToClassList("section-foldout");
+        private Foldout CreateTablesFoldout() {
+            var tablesFoldout = new Foldout {text = "Tables", name = "TableFoldout"};
+            tablesFoldout.AddToClassList("section-foldout");
+            tablesFoldout.AddToClassList("themeTable");
+            if (!tablesFoldoutClosed) tablesFoldout.AddToClassList("foldout-open");
+            tablesFoldout.BindProperty(new SerializedObject(this).FindProperty("tablesFoldoutClosed"));
+            tablesFoldout.RegisterValueChangedCallback(evt => {
+                if (evt.newValue) tablesFoldout.AddToClassList("foldout-open");
+                else tablesFoldout.RemoveFromClassList("foldout-open");
+            });
 
-            settingsContainer.Add(localesFoldout);
-            settingsContainer.Add(otherFoldout);
-            rootVisualElement.Add(settingsContainer);
+            var createTableButton = new Button {text = "Create New Table", name = "CreateTable"};
+            createTableButton.clicked += () => CreateTableWindow.Display(Event.current.mousePosition + position.position + Vector2.up * 20,this, activeSettings.ActiveSettings);
+            tablesFoldout.Add(createTableButton);
+
+            return tablesFoldout;
         }
 
         private void OnLocalesGUI() {
