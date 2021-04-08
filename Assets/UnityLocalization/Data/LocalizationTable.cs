@@ -46,18 +46,18 @@ namespace UnityLocalization.Data {
         internal class Table {
             [SerializeField] internal List<Locale> locales;
             [SerializeField] internal List<LocalizationEntry> entries;
-            [SerializeField] internal List<Guid> entryGuids;
+            [SerializeField] internal List<string> entryGuids;
 
             internal Table(List<Locale> locales) {
                 this.locales = new List<Locale>(locales);
                 entries = new List<LocalizationEntry>();
-                entryGuids = new List<Guid>();
+                entryGuids = new List<string>();
             }
 
             internal void AddLocalization(string key) {
                 var entry = new LocalizationEntry(key, locales.Count);
                 entries.Add(entry);
-                entryGuids.Add(Guid.NewGuid());
+                entryGuids.Add(Guid.NewGuid().ToString());
             }
 
             internal void UpdateLocalization(int row, int column, string value) {

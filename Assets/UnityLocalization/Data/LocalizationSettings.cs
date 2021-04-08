@@ -9,6 +9,7 @@ namespace UnityLocalization.Data {
         [SerializeField] private bool tablesDirty;
         [SerializeField] private Locale defaultLocale;
         [SerializeField] private List<Locale> locales = new List<Locale>();
+        [SerializeField] private List<string> tableGuids = new List<string>();
         [SerializeField] private List<LocalizationTable> tables = new List<LocalizationTable>();
 
         public void SetDefaultLocale(Locale locale) {
@@ -47,12 +48,17 @@ namespace UnityLocalization.Data {
             var table = CreateInstance<LocalizationTable>();
             table.Initialize(tableName, locales);
             tables.Add(table);
+            tableGuids.Add(Guid.NewGuid().ToString());
             AssetDatabase.CreateAsset(table, path);
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
         }
 
         public void RemoveTable(LocalizationTable table) {
+            var tableIndex = tables.IndexOf(table);
+            if(tableIndex < 0) throw new ArgumentException("The specified table does not exist.");
+            
             tables.Remove(table);
+            tableGuids.RemoveAt(tableIndex);
         }
 
         public Locale DefaultLocale => defaultLocale;
