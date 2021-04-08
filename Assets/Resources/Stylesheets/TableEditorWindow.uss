@@ -2,16 +2,41 @@
   flex-direction: column;
 }
 :root > #TabContainer {
-  margin: 4px;
-  height: 32px;
-  background-color: darkblue;
+  background-color: #1b1b1b;
+}
+:root > #TabContainer #unity-content-container.unity-scroll-view__content-container {
+  height: 24px;
   flex-direction: row;
-  overflow: scroll;
 }
 :root > #TabContents {
   flex-grow: 1;
-  margin: 0 4px 4px;
-  background-color: darkred;
+  padding: 0 4px 4px;
+  background-color: #3a3a3a;
+}
+:root > #TabContents .contents {
+  font-size: 40px;
+  -unity-text-align: middle-center;
+}
+
+Tab {
+  justify-content: center;
+  align-items: center;
+  margin-right: 2px;
+  min-width: 64px;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  border-top-width: 2px;
+  border-top-color: #1b1b1b;
+  border-bottom-width: 1px;
+  border-bottom-color: #1b1b1b;
+  background-color: #1b1b1b;
+}
+Tab.active {
+  background-color: #3a3a3a;
+  border-top-color: #ff5050;
+}
+Tab Label.tab-label {
+  -unity-text-align: middle-center;
 }
 
 /*# sourceMappingURL=TableEditorWindow.uss.map */

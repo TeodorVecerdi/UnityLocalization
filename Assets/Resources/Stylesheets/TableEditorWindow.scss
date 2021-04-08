@@ -1,17 +1,53 @@
-﻿:root {
+﻿$dark: #3a3a3a;
+$darker: #1b1b1b;
+$accent: #ff5050;
+
+:root {
     flex-direction: column;
-    
+
     & > #TabContainer {
-        margin: 4px;
-        height: 32px;
-        background-color: darkblue;
-        flex-direction: row;
-        overflow: scroll;
+        background-color: $darker;
+        #unity-content-container.unity-scroll-view__content-container {
+            height: 24px;
+            flex-direction: row;
+        }
     }
-    
+
     & > #TabContents {
         flex-grow: 1;
-        margin: 0 4px 4px;
-        background-color: darkred;
+        padding: 0 4px 4px;
+        background-color: $dark;
+        
+        & .contents {
+            font-size: 40px;
+            -unity-text-align: middle-center;
+        }
+    }
+}
+
+Tab {
+    justify-content: center;
+    align-items: center;
+    
+    margin-right: 2px;
+    min-width: 64px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    
+    border-top-width: 2px;
+    border-top-color: $darker;
+    border-bottom-width: 1px;
+    border-bottom-color: $darker;
+    background-color: $darker;
+    
+    &.active {
+        background-color: $dark;
+        border-top-color: $accent;
+        Label.tab-label {
+            //-unity-font-style: bold;
+        }
+    }
+    Label.tab-label {
+        -unity-text-align: middle-center;
     }
 }
