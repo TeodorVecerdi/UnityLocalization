@@ -14,8 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tablesDirty: 0
   defaultLocale:
-    localeCode: 
-    englishName: 
-    nativeName: 
-  locales: []
+    localeCode: en-US
+    englishName: English
+    nativeName: English
+  locales:
+  - localeCode: en-US
+    englishName: English
+    nativeName: English
+  - localeCode: en-GB
+    englishName: English (United Kingdom)
+    nativeName: English (United Kingdom)
   tables: []
