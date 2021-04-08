@@ -57,6 +57,7 @@ namespace UnityLocalization.Data {
 
         public Locale DefaultLocale => defaultLocale;
         public List<Locale> Locales => locales;
+        public List<LocalizationTable> Tables => tables;
         public bool HasLocale(Locale locale) => locales.Contains(locale);
 
         public bool TablesDirty {
