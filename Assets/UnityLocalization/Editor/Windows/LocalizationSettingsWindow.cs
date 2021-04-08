@@ -22,9 +22,9 @@ namespace UnityLocalization {
             var window = GetWindow<LocalizationSettingsWindow>();
             var stylesheet = Resources.Load<StyleSheet>("Stylesheets/SettingsWindow");
             try {
-                if (!window.rootVisualElement.styleSheets.Contains(stylesheet)) window.rootVisualElement.styleSheets.Add(stylesheet);
-            } catch (Exception e) {
-                Debug.LogException(e);
+                window.rootVisualElement.styleSheets.Add(stylesheet);
+            } catch {
+                window.deferStylesheetLoading = true;
             }
         }
 
@@ -42,6 +42,7 @@ namespace UnityLocalization {
             if (EditorPrefs.HasKey(Constants.ACTIVE_SETTINGS_PREFS_KEY)) {
                 activeSettings.ActiveSettings = AssetDatabase.LoadAssetAtPath<LocalizationSettings>(EditorPrefs.GetString(Constants.ACTIVE_SETTINGS_PREFS_KEY));
             }
+
             activeSettingsEditor = Editor.CreateEditor(activeSettings) as ActiveLocalizationSettingsEditor;
             activeSettingsEditor.OnActiveSettingsChanged += ActiveSettingsChanged;
             Undo.undoRedoPerformed += UndoRedoPerformed;
@@ -61,11 +62,23 @@ namespace UnityLocalization {
 #pragma warning disable 0414 // reason: used implicitly 
         [SerializeField] private bool localeFoldoutClosed = true;
 #pragma warning restore 0414
+        private bool deferStylesheetLoading;
 
         private VisualElement settingsContainer;
         private Label defaultLocaleLabel;
 
         private void CreateGUI() {
+            if (activeSettings == null || activeSettingsEditor == null) {
+                Initialize();
+                OnEnable();
+            }
+
+            if (deferStylesheetLoading) {
+                var stylesheet = Resources.Load<StyleSheet>("Stylesheets/SettingsWindow");
+                rootVisualElement.styleSheets.Add(stylesheet);
+                deferStylesheetLoading = false;
+            }
+
             var header = new Label("Localization Settings") {name = "LocalizationTitle"};
             header.AddToClassList("header");
 
@@ -86,12 +99,12 @@ namespace UnityLocalization {
             });
             defaultLocaleLabel = new Label {name = "DefaultLocale"};
             UpdateDefaultLocaleLabel();
-            
+
             var localesSearchField = new ToolbarSearchField {name = "LocalesSearchField", tooltip = "Search locales", value = localeSearchQuery};
             localesSearchField.AddToClassList("searchField");
             localesSearchField.AddToClassList("themeLocale");
             var localesSearchPlaceholder = new Label("Search locales") {name = "LocalesSearchPlaceholder"};
-            if(!string.IsNullOrEmpty(localeSearchQuery)) localesSearchPlaceholder.AddToClassList("hidden"); 
+            if (!string.IsNullOrEmpty(localeSearchQuery)) localesSearchPlaceholder.AddToClassList("hidden");
             var localesTextField = localesSearchField.Q<TextField>();
             localesTextField[0].Add(localesSearchPlaceholder);
             localesTextField.BindProperty(new SerializedObject(this).FindProperty("localeSearchQuery"));
@@ -107,9 +120,9 @@ namespace UnityLocalization {
             var opacity = checkmark.style.opacity;
             opacity.value = 5f;
             checkmark.style.opacity = opacity;
-            
+
             var otherFoldout = new Foldout {text = "Other foldout", name = "OtherFoldout"};
-            otherFoldout.AddToClassList("section-foldout"); 
+            otherFoldout.AddToClassList("section-foldout");
 
             settingsContainer.Add(localesFoldout);
             settingsContainer.Add(otherFoldout);
@@ -125,7 +138,7 @@ namespace UnityLocalization {
                 UpdateFilter();
                 localeQueryChanged = false;
             }
-            
+
             GUILayout.BeginVertical(style_containerNoMarginTop);
             localeSearchScroll = GUILayout.BeginScrollView(localeSearchScroll,
                                                            filteredLocales.Count * 40 >= 200 ? new[] {GUILayout.MaxHeight(200), GUILayout.MinHeight(0)} : new GUILayoutOption[0]);
@@ -176,7 +189,6 @@ namespace UnityLocalization {
             }
 
             settingsContainer.AddToClassList("hidden");
-            
         }
 
         private void UndoRedoPerformed() {
@@ -186,7 +198,7 @@ namespace UnityLocalization {
 
         private void UpdateDefaultLocaleLabel() {
             var defaultLocale = activeSettings == null || activeSettings.ActiveSettings == null ? null : activeSettings.ActiveSettings.DefaultLocale;
-            
+
             if (defaultLocale == null || string.IsNullOrEmpty(defaultLocale.LocaleCode)) {
                 defaultLocaleLabel.text = "Default Locale: No default locale selected";
                 defaultLocaleLabel.AddToClassList("no-locale");
@@ -207,6 +219,7 @@ namespace UnityLocalization {
                 filteredLocales = settings.Locales.ToList();
                 return;
             }
+
             filteredLocales = settings.Locales.Where(locale => locale.EnglishName.ToLowerInvariant().Contains(localeSearchQuery.ToLowerInvariant()) ||
                                                                locale.NativeName.ToLowerInvariant().Contains(localeSearchQuery.ToLowerInvariant()) ||
                                                                locale.LocaleCode.ToLowerInvariant().Contains(localeSearchQuery.ToLowerInvariant()))
