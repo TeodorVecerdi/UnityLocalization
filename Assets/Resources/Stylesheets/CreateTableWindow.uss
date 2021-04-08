@@ -1,0 +1,39 @@
+:root {
+  padding: 10px;
+  border-color: #ff5050;
+  border-width: 1px;
+}
+:root #TableName {
+  min-height: 28px;
+}
+:root #TableName > Label {
+  display: none;
+}
+:root #TableName > TextInput {
+  justify-content: center;
+}
+:root #TableName > TextInput:focus {
+  border-color: #ff5050;
+}
+:root #CreateTableButton {
+  margin-top: 4px;
+  min-height: 28px;
+  border-radius: 0;
+  background-image: resource("white");
+  -unity-background-image-tint-color: #ff5050;
+  border-color: #ff5050;
+  color: white;
+}
+:root #CreateTableButton:disabled {
+  border-color: transparent;
+}
+:root #CreateTableButton:hover {
+  -unity-background-image-tint-color: #ff6a6a;
+  border-color: #ff6a6a;
+}
+:root #CreateTableButton:hover:active {
+  -unity-background-image-tint-color: #ff3737;
+  border-color: #ff3737;
+}
+
+/*# sourceMappingURL=CreateTableWindow.uss.map */

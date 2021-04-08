@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 using UnityLocalization.Data;
@@ -20,8 +21,10 @@ namespace UnityLocalization {
             if (!HasOpenInstances<LocalizationSettingsWindow>()) return;
 
             var window = GetWindow<LocalizationSettingsWindow>();
+            var utilityStylesheet = Resources.Load<StyleSheet>("Stylesheets/Utility");
             var stylesheet = Resources.Load<StyleSheet>("Stylesheets/SettingsWindow");
             try {
+                window.rootVisualElement.styleSheets.Add(utilityStylesheet);
                 window.rootVisualElement.styleSheets.Add(stylesheet);
             } catch {
                 window.deferStylesheetLoading = true;
@@ -47,6 +50,7 @@ namespace UnityLocalization {
             activeSettingsEditor.OnActiveSettingsChanged += ActiveSettingsChanged;
             Undo.undoRedoPerformed += UndoRedoPerformed;
             UpdateFilter();
+            UpdateTableFilter();
         }
 
         private void OnDisable() {
@@ -59,8 +63,16 @@ namespace UnityLocalization {
         [SerializeField] private Vector2 localeSearchScroll;
         [SerializeReference] private Locale selectedLocale;
         private bool localeQueryChanged;
+
+        [SerializeField] private List<LocalizationTable> filteredTables;
+        [SerializeField] private string tableSearchQuery;
+        [SerializeField] private Vector2 tableSearchScroll;
+        [SerializeReference] private LocalizationTable selectedTable;
+        private bool tableQueryChanged;
+
 #pragma warning disable 0414 // reason: used implicitly 
-        [SerializeField] private bool localeFoldoutClosed = true;
+        [SerializeField] private bool localeFoldoutClosed;
+        [SerializeField] private bool tablesFoldoutClosed;
 #pragma warning restore 0414
         private bool deferStylesheetLoading;
 
@@ -74,7 +86,9 @@ namespace UnityLocalization {
             }
 
             if (deferStylesheetLoading) {
+                var utilityStylesheet = Resources.Load<StyleSheet>("Stylesheets/Utility");
                 var stylesheet = Resources.Load<StyleSheet>("Stylesheets/SettingsWindow");
+                rootVisualElement.styleSheets.Add(utilityStylesheet);
                 rootVisualElement.styleSheets.Add(stylesheet);
                 deferStylesheetLoading = false;
             }
@@ -87,32 +101,37 @@ namespace UnityLocalization {
 
             settingsContainer = new VisualElement {name = "SettingsContainer"};
 
-            var localesFoldout = new Foldout {text = "Locales", name = "LocaleFoldout"};
-            localesFoldout.AddToClassList("firstOfType");
-            localesFoldout.AddToClassList("themeLocale");
-            localesFoldout.AddToClassList("section-foldout");
-            if (!localeFoldoutClosed) localesFoldout.AddToClassList("foldout-open");
-            localesFoldout.BindProperty(new SerializedObject(this).FindProperty("localeFoldoutClosed"));
-            localesFoldout.RegisterValueChangedCallback(evt => {
-                if (evt.newValue) localesFoldout.AddToClassList("foldout-open");
-                else localesFoldout.RemoveFromClassList("foldout-open");
-            });
+            var localesFoldout = CreateLocalesFoldout();
+            var tablesFoldout = CreateTablesFoldout();
+
+            settingsContainer.Add(localesFoldout);
+            settingsContainer.Add(tablesFoldout);
+            rootVisualElement.Add(settingsContainer);
+        }
+
+        private Foldout CreateLocalesFoldout() {
+            var localesFoldout = VisualElementFactory.Foldout("LocaleFoldout", "Locales", nameof(localeFoldoutClosed), this, localeFoldoutClosed, "themeLocale", "firstOfType");
             defaultLocaleLabel = new Label {name = "DefaultLocale"};
             UpdateDefaultLocaleLabel();
 
-            var localesSearchField = new ToolbarSearchField {name = "LocalesSearchField", tooltip = "Search locales", value = localeSearchQuery};
-            localesSearchField.AddToClassList("searchField");
-            localesSearchField.AddToClassList("themeLocale");
-            var localesSearchPlaceholder = new Label("Search locales") {name = "LocalesSearchPlaceholder"};
-            if (!string.IsNullOrEmpty(localeSearchQuery)) localesSearchPlaceholder.AddToClassList("hidden");
-            var localesTextField = localesSearchField.Q<TextField>();
-            localesTextField[0].Add(localesSearchPlaceholder);
-            localesTextField.BindProperty(new SerializedObject(this).FindProperty("localeSearchQuery"));
-            localesTextField.RegisterValueChangedCallback(evt => {
-                if (string.IsNullOrEmpty(evt.newValue)) localesSearchPlaceholder.RemoveFromClassList("hidden");
-                else localesSearchPlaceholder.AddToClassList("hidden");
-                localeQueryChanged = true;
-            });
+            var localesSearchField = VisualElementFactory
+                                     .Create<ToolbarSearchField>("LocalesSearchField", "searchField", "themeLocale")
+                                     .Q<TextField>()
+                                     .Do(self => {
+                                         self.value = localeSearchQuery;
+
+                                         var localesSearchPlaceholder = self[0].AddGet<Label>("LocalesSearchPlaceholder");
+                                         localesSearchPlaceholder.text = "Search locales";
+                                         if (!string.IsNullOrEmpty(localeSearchQuery)) localesSearchPlaceholder.AddToClassList("hidden");
+
+                                         self.BindProperty(new SerializedObject(this).FindProperty(nameof(localeSearchQuery)));
+                                         self.RegisterValueChangedCallback(evt => {
+                                             if (string.IsNullOrEmpty(evt.newValue)) localesSearchPlaceholder.RemoveFromClassList("hidden");
+                                             else localesSearchPlaceholder.AddToClassList("hidden");
+                                             localeQueryChanged = true;
+                                         });
+                                     }).NthParent<ToolbarSearchField>(1);
+
             localesFoldout.Add(defaultLocaleLabel);
             localesFoldout.Add(localesSearchField);
             localesFoldout.Add(new IMGUIContainer(OnLocalesGUI) {name = "LocaleEditor"});
@@ -120,13 +139,38 @@ namespace UnityLocalization {
             var opacity = checkmark.style.opacity;
             opacity.value = 5f;
             checkmark.style.opacity = opacity;
+            return localesFoldout;
+        }
 
-            var otherFoldout = new Foldout {text = "Other foldout", name = "OtherFoldout"};
-            otherFoldout.AddToClassList("section-foldout");
+        private Foldout CreateTablesFoldout() {
+            var tablesFoldout = VisualElementFactory.Foldout("TableFoldout", "Tables", nameof(tablesFoldoutClosed), this, tablesFoldoutClosed, "themeTable");
+            var createTableButton = VisualElementFactory.Create<Button>("CreateTable", "large").Do(self => {
+                self.text = "Create New Table";
+                self.clicked += () => CreateTableWindow.Display(Event.current.mousePosition + position.position + Vector2.up * 20, this, activeSettings.ActiveSettings);
+            });
+            var searchField = VisualElementFactory
+                              .Create<ToolbarSearchField>("TablesSearchField", "searchField", "themeTable")
+                              .Q<TextField>()
+                              .Do(self => {
+                                  self.value = localeSearchQuery;
 
-            settingsContainer.Add(localesFoldout);
-            settingsContainer.Add(otherFoldout);
-            rootVisualElement.Add(settingsContainer);
+                                  var placeholder = self[0].AddGet<Label>("TablesSearchPlaceholder", "placeholderLabel");
+                                  placeholder.text = "Search tables";
+                                  if (!string.IsNullOrEmpty(tableSearchQuery)) placeholder.AddToClassList("hidden");
+
+                                  self.BindProperty(new SerializedObject(this).FindProperty(nameof(tableSearchQuery)));
+                                  self.RegisterValueChangedCallback(evt => {
+                                      if (string.IsNullOrEmpty(evt.newValue)) placeholder.RemoveFromClassList("hidden");
+                                      else placeholder.AddToClassList("hidden");
+                                      tableQueryChanged = true;
+                                  });
+                              }).NthParent<ToolbarSearchField>(1);
+
+            tablesFoldout.Add(createTableButton);
+            tablesFoldout.Add(searchField);
+            tablesFoldout.Add(new IMGUIContainer(OnTablesGUI) {name = "TableEditor"});
+
+            return tablesFoldout;
         }
 
         private void OnLocalesGUI() {
@@ -181,9 +225,58 @@ namespace UnityLocalization {
             GUILayout.EndHorizontal();
         }
 
+        private void OnTablesGUI() {
+            var settings = activeSettings.ActiveSettings;
+            if (settings == null) return;
+            if (!stylesLoaded) LoadStyles();
+
+            if (tableQueryChanged) {
+                UpdateTableFilter();
+                tableQueryChanged = false;
+            }
+
+            GUILayout.BeginVertical(style_containerNoMarginTop);
+            tableSearchScroll = GUILayout.BeginScrollView(tableSearchScroll,
+                                                          filteredTables.Count * 40 >= 200 ? new[] {GUILayout.MaxHeight(200), GUILayout.MinHeight(0)} : new GUILayoutOption[0]);
+            selectedTable = GUILayoutExtras.Selection(selectedTable, filteredTables, (val, isSelected, index) => {
+                var back = GUI.backgroundColor;
+                GUI.backgroundColor = index % 2 == 0 ? new Color(0.8f, 0.8f, 0.8f) : Color.white;
+                GUI.enabled = !isSelected;
+                var clicked = GUILayout.Button("", style_localeSelectionEntryButton, GUILayout.MinHeight(40));
+                var lastRect = GUILayoutUtility.GetLastRect();
+                GUI.enabled = true;
+                GUI.Label(lastRect, $"{val.TableName}", style_localeSelectionEntryLabel);
+                GUI.backgroundColor = back;
+                return clicked;
+            });
+
+            GUILayout.EndScrollView();
+            GUILayout.EndVertical();
+            GUILayout.BeginHorizontal(style_containerNoMarginTop);
+
+            if (GUILayout.Button("Open Table Editor", GUILayout.Height(30))) {
+            }
+
+            if (selectedTable == null) GUI.enabled = false;
+            if (GUILayout.Button("Remove Selected", GUILayout.Height(30))) {
+                if (EditorUtility.DisplayDialog("Confirm table removal", "This action cannot be undone. Are you sure you want to delete the table?", "Yes", "No")) {
+                    settings.RemoveTable(selectedTable);
+                    AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(selectedTable));
+                    Utils.SaveChanges();
+                    selectedTable = null;
+                    UpdateTableFilter();
+                }
+            }
+
+            GUI.enabled = true;
+
+            GUILayout.EndHorizontal();
+        }
+
         private void ActiveSettingsChanged(LocalizationSettings newSettings) {
             if (newSettings != null) {
                 UpdateFilter(newSettings);
+                UpdateTableFilter(newSettings);
                 settingsContainer.RemoveFromClassList("hidden");
                 return;
             }
@@ -193,6 +286,7 @@ namespace UnityLocalization {
 
         private void UndoRedoPerformed() {
             UpdateFilter();
+            UpdateTableFilter();
             EditorUtility.SetDirty(this);
         }
 
@@ -224,6 +318,23 @@ namespace UnityLocalization {
                                                                locale.NativeName.ToLowerInvariant().Contains(localeSearchQuery.ToLowerInvariant()) ||
                                                                locale.LocaleCode.ToLowerInvariant().Contains(localeSearchQuery.ToLowerInvariant()))
                                       .ToList();
+        }
+
+        public void UpdateTableFilter(LocalizationSettings newSettings = null) {
+            var settings = newSettings != null ? newSettings : activeSettings.ActiveSettings;
+            if (settings == null) {
+                filteredTables = new List<LocalizationTable>();
+                return;
+            }
+
+            if (string.IsNullOrEmpty(tableSearchQuery)) {
+                filteredTables = settings.Tables.ToList();
+                return;
+            }
+
+            filteredTables = settings.Tables.Where(table => table.TableName.ToLowerInvariant().Contains(tableSearchQuery.ToLowerInvariant()) ||
+                                                            tableSearchQuery.ToLowerInvariant().Contains(table.TableName.ToLowerInvariant()))
+                                     .ToList();
         }
 
         private static void LoadStyles() {

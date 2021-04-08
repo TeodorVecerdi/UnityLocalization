@@ -1,0 +1,47 @@
+﻿$tableTheme: rgb(255, 80, 80);
+
+:root {
+    padding: 10px;
+    border-color: $tableTheme;
+    border-width: 1px;
+
+    #TableName {
+        min-height: 28px;
+
+        & > Label {
+            display: none;
+        }
+
+        & > TextInput {
+            justify-content: center;
+
+            &:focus {
+                border-color: $tableTheme;
+            }
+        }
+    }
+
+    #CreateTableButton {
+        margin-top: 4px;
+        min-height: 28px;
+        border-radius: 0;
+        background-image: resource("white");
+        -unity-background-image-tint-color: $tableTheme;
+        border-color: $tableTheme;
+        color: white;
+
+        &:disabled {
+            border-color: transparent;
+        }
+
+        &:hover {
+            -unity-background-image-tint-color: lighten($tableTheme, 5%);
+            border-color: lighten($tableTheme, 5%);
+
+            &:active {
+                -unity-background-image-tint-color: darken($tableTheme, 5%);
+                border-color: darken($tableTheme, 5%);
+            }
+        }
+    }
+}

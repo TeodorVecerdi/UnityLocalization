@@ -1,43 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace UnityLocalization.Data {
     [Serializable]
     public class LocalizationEntry {
-        internal string key;
-        internal List<string> values = new List<string>();
+        [SerializeField] public string Key;
+        [SerializeField] public List<string> Values = new List<string>();
 
         internal LocalizationEntry(string key, int localeCount) {
-            this.key = key;
+            Key = key;
             for (var i = 0; i < localeCount; i++) {
-                values.Add(null);
+                Values.Add(null);
             }
         }
 
         internal void AddColumn() {
-            values.Add(null);
+            Values.Add(null);
         }
 
         internal void RemoveColumn(int columnIndex) {
-            values.RemoveAt(columnIndex);
+            Values.RemoveAt(columnIndex);
         }
 
         internal void UpdateValue(int columnIndex, string value) {
-            values[columnIndex] = value;
+            Values[columnIndex] = value;
         }
 
         internal void SwapColumns(int oldIndex, int newIndex) {
-            var oldValue = values[oldIndex];
-            values[oldIndex] = values[newIndex];
-            values[newIndex] = oldValue;
+            var oldValue = Values[oldIndex];
+            Values[oldIndex] = Values[newIndex];
+            Values[newIndex] = oldValue;
         }
 
         internal bool IsLocalized(int columnIndex) {
-            return !string.IsNullOrEmpty(values[columnIndex]);
+            return !string.IsNullOrEmpty(Values[columnIndex]);
         }
 
         internal string GetValue(int columnIndex) {
-            return values[columnIndex];
+            return Values[columnIndex];
         }
     }
 }
