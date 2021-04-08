@@ -1,0 +1,17 @@
+:root {
+  flex-direction: column;
+}
+:root > #TabContainer {
+  margin: 4px;
+  height: 32px;
+  background-color: darkblue;
+  flex-direction: row;
+  overflow: scroll;
+}
+:root > #TabContents {
+  flex-grow: 1;
+  margin: 0 4px 4px;
+  background-color: darkred;
+}
+
+/*# sourceMappingURL=TableEditorWindow.uss.map */

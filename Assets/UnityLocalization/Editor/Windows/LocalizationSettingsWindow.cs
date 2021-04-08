@@ -255,6 +255,7 @@ namespace UnityLocalization {
             GUILayout.BeginHorizontal(style_containerNoMarginTop);
 
             if (GUILayout.Button("Open Table Editor", GUILayout.Height(30))) {
+                TableEditorWindow.Display(settings);
             }
 
             if (selectedTable == null) GUI.enabled = false;
