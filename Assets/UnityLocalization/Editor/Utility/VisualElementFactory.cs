@@ -1,4 +1,6 @@
 ﻿using System;
+using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
 namespace UnityLocalization.Utility {
@@ -34,7 +36,7 @@ namespace UnityLocalization.Utility {
             element.Add(t2);
             return element;
         }
-        public static T2 AddGet<T, T2>(this T element, string name = null, params string[] classNames) where T : VisualElement where T2 : VisualElement, new() {
+        public static T2 AddGet<T2>(this VisualElement element, string name = null, params string[] classNames) where T2 : VisualElement, new() {
             var t2 = Create<T2>(name, classNames);
             element.Add(t2);
             return t2;
@@ -55,7 +57,7 @@ namespace UnityLocalization.Utility {
                 self.label = label;
                 self.value = value;
                 self.AddToClassList("textFieldWithPlaceholder");
-            }).Q("unity-text-input").AddGet<VisualElement, Label>(placeholderName, "placeholderLabel").Do(self => {
+            }).Q("unity-text-input").AddGet<Label>(placeholderName, "placeholderLabel").Do(self => {
                 self.text = placeholderText;
                 if(!string.IsNullOrEmpty(value)) self.AddToClassList("hidden");
             }).NthParent<TextField>(2).Do(self => {
@@ -63,6 +65,19 @@ namespace UnityLocalization.Utility {
                 self.RegisterValueChangedCallback(evt => {
                     if (string.IsNullOrEmpty(evt.newValue)) placeholderLabel.RemoveFromClassList("hidden");
                     else placeholderLabel.AddToClassList("hidden");
+                });
+            });
+        }
+
+        public static Foldout Foldout(string name, string title, string boundPropertyName, UnityEngine.Object boundObject, bool isClosed, params string[] classNames) {
+            return Create<Foldout>(name, classNames).Do(self => {
+                self.text = title;
+                self.AddToClassList("section-foldout");
+                if (!isClosed) self.AddToClassList("foldout-open");
+                self.BindProperty(new SerializedObject(boundObject).FindProperty(boundPropertyName));
+                self.RegisterValueChangedCallback(evt => {
+                    if (evt.newValue) self.AddToClassList("foldout-open");
+                    else self.RemoveFromClassList("foldout-open");
                 });
             });
         }

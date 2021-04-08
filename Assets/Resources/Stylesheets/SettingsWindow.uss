@@ -28,6 +28,9 @@ ToolbarSearchField.searchField {
 ToolbarSearchField.searchField.themeLocale:focus {
   border-color: coral;
 }
+ToolbarSearchField.searchField.themeTable:focus {
+  border-color: #ff5050;
+}
 ToolbarSearchField.searchField Button#unity-search.unity-search-field-base__search-button {
   height: 10px;
   width: 10px;
@@ -122,6 +125,22 @@ Foldout.section-foldout#LocaleFoldout Label#LocalesSearchPlaceholder {
 Foldout.section-foldout#LocaleFoldout ToolbarSearchField#LocalesSearchField {
   margin-top: 10px;
   margin-bottom: 4px;
+}
+Foldout.section-foldout#TableFoldout > VisualElement#unity-content.unity-foldout__content {
+  padding-left: 5px;
+  padding-right: 8px;
+}
+Foldout.section-foldout#TableFoldout #TablesSearchField {
+  margin-left: 4px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+}
+Foldout.section-foldout#TableFoldout Button#CreateTable {
+  margin-bottom: 8px;
+}
+Foldout.section-foldout#TableFoldout > IMGUIContainer {
+  margin-left: -4px;
+  margin-right: -6px;
 }
 
 /*# sourceMappingURL=SettingsWindow.uss.map */

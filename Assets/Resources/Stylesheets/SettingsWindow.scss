@@ -21,10 +21,16 @@
 ToolbarSearchField.searchField {
     $defaultTheme: rgb(35, 134, 205);
     $localeTheme: rgb(255, 127, 80);
+    $tableTheme: rgb(255, 80, 80);
 
     &.themeLocale {
         &:focus {
             border-color: $localeTheme;
+        }
+    }
+    &.themeTable {
+        &:focus {
+            border-color: $tableTheme;
         }
     }
 
@@ -172,8 +178,21 @@ Foldout.section-foldout {
     }
 
     &#TableFoldout {
+        & > VisualElement#unity-content.unity-foldout__content {
+            padding-left: 5px;
+            padding-right: 8px;
+        }
+        #TablesSearchField {
+            margin-left: 4px;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
         Button#CreateTable {
-            
+            margin-bottom: 8px;
+        }
+        & > IMGUIContainer {
+            margin-left: -4px;
+            margin-right: -6px;
         }
     }
 }

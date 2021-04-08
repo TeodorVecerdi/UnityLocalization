@@ -72,12 +72,20 @@ namespace UnityLocalization {
                 return;
 
             if (!savePath.StartsWith(Application.dataPath)) {
-                EditorUtility.DisplayDialog("Invalid location!", "The location specified is not valid. You should create the table in your assets folder.", "Close");
+                EditorUtility.DisplayDialog("Invalid location!", "The location specified is not valid. You should create the table in your assets folder, in a Resources subfolder.", "Close");
+                Focus();
+                return;
+            }
+
+            if (!savePath.Contains("/Resources")) {
+                EditorUtility.DisplayDialog("Invalid location!", "The location specified is not valid. You should create the table in your assets folder, in a Resources subfolder.", "Close");
+                Focus();
                 return;
             }
 
             var cleanPath = savePath.Substring(Application.dataPath.LastIndexOf('/') + 1);
             settings.AddTable(tableName, cleanPath);
+            owner.UpdateTableFilter();
             Close();
         }
     }

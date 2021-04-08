@@ -11,6 +11,14 @@ Label.placeholderLabel {
     cursor: text;
 }
 
+Button {
+    border-radius: 0;
+    height: 24px;
+    &.large {
+        height: 32px;
+    }
+}
+
 TextField.unity-base-field.unity-base-text-field.unity-text-field {
     &.textFieldWithPlaceholder {
         min-height: 20px;

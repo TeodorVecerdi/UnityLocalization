@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UnityLocalization.Data {
     [CreateAssetMenu(menuName = "Localization/Localization Table", order = 1)]
-    public class LocalizationTable : ScriptableObject {
+    public class LocalizationTable : ScriptableObject, IEquatable<LocalizationTable> {
         [SerializeField] private string tableName;
         [SerializeField] private Table table;
         public string TableName => tableName;
@@ -97,6 +97,12 @@ namespace UnityLocalization.Data {
                     entry.SwapColumns(oldIndex, newIndex);
                 }
             }
+        }
+
+        public bool Equals(LocalizationTable other) {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return GetInstanceID() == other.GetInstanceID();
         }
     }
 }
