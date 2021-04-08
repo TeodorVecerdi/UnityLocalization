@@ -160,3 +160,13 @@ InitTestScene*.unity
 
 
 # End of https://www.toptal.com/developers/gitignore/api/jetbrains+all,unity
+
+Assets/_theme/
+
+Assets/Editor Default Resources/
+
+Assets/_theme.meta
+
+Assets/Editor Default Resources.meta
+
+*.DotSettings
