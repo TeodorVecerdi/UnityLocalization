@@ -2,16 +2,16 @@
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UIElements;
 using UnityLocalization.Data;
 using UnityLocalization.Utility;
 
 namespace UnityLocalization {
     public class CreateTableWindow : EditorWindow {
-        public static void Display(Vector2 position, LocalizationSettingsWindow owner, LocalizationSettings settings) {
+        public static void Display(Vector2 position, LocalizationSettings settings) {
             var window = CreateInstance<CreateTableWindow>();
             window.settings = settings;
-            window.owner = owner;
             window.titleContent = new GUIContent("Create Table");
             window.Initialize();
             // window.Show();
@@ -33,7 +33,6 @@ namespace UnityLocalization {
             }
         }
 
-        [SerializeReference] private LocalizationSettingsWindow owner;
         [SerializeReference] private LocalizationSettings settings;
         [SerializeField] private string tableName;
         private bool deferStylesheetLoading;
@@ -85,7 +84,8 @@ namespace UnityLocalization {
 
             var cleanPath = savePath.Substring(Application.dataPath.LastIndexOf('/') + 1);
             settings.AddTable(tableName, cleanPath);
-            owner.UpdateTableFilter();
+            
+            Utils.DirtyTables(settings);
             Close();
         }
     }

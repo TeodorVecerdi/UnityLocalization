@@ -1,3 +1,50 @@
+.hidden {
+  display: none;
+}
+
+Label.placeholderLabel {
+  color: #5E5E5E;
+  font-size: 12px;
+  margin-top: 1px;
+  cursor: text;
+}
+
+Button {
+  border-radius: 0;
+  height: 24px;
+}
+Button.large {
+  height: 32px;
+}
+
+TextField.unity-base-field.unity-base-text-field.unity-text-field.textFieldWithPlaceholder {
+  min-height: 20px;
+}
+TextField.unity-base-field.unity-base-text-field.unity-text-field > TextInput {
+  border-radius: 0;
+}
+TextField.unity-base-field.unity-base-text-field.unity-text-field > TextInput:enabled {
+  border-color: #212121;
+}
+TextField.unity-base-field.unity-base-text-field.unity-text-field > TextInput:hover {
+  border-color: #656565;
+}
+TextField.unity-base-field.unity-base-text-field.unity-text-field > TextInput:focus {
+  border-color: #2386cd;
+}
+TextField.unity-base-field.unity-base-text-field.unity-text-field.breakLabel {
+  flex-wrap: wrap;
+}
+TextField.unity-base-field.unity-base-text-field.unity-text-field.breakLabel > Label {
+  flex-grow: 1;
+  padding-right: 20000px;
+  margin-bottom: 2px;
+}
+TextField.unity-base-field.unity-base-text-field.unity-text-field > Label {
+  min-width: auto;
+  padding-right: 8px;
+}
+
 :root {
   flex-direction: column;
 }
@@ -52,6 +99,8 @@ Tab.active {
   border-top-color: #ff5050;
 }
 Tab Label.tab-label {
+  padding-left: 12px;
+  padding-right: 12px;
   -unity-text-align: middle-center;
 }
 

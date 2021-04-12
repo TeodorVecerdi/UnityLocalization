@@ -1,4 +1,6 @@
-﻿$dark: #3a3a3a;
+﻿@import "Utility";
+
+$dark: #3a3a3a;
 $darker: #1b1b1b;
 $accent: #ff5050;
 
@@ -70,6 +72,7 @@ Tab {
     }
 
     Label.tab-label {
+        @include padding-x(12px);
         -unity-text-align: middle-center;
     }
 }

@@ -142,7 +142,7 @@ namespace UnityLocalization {
             var tablesFoldout = VisualElementFactory.Foldout("TableFoldout", "Tables", nameof(tablesFoldoutClosed), this, tablesFoldoutClosed, "themeTable");
             var createTableButton = VisualElementFactory.Create<Button>("CreateTable", "large").Do(self => {
                 self.text = "Create New Table";
-                self.clicked += () => CreateTableWindow.Display(Event.current.mousePosition + position.position + Vector2.up * 20, this, activeSettings.ActiveSettings);
+                self.clicked += () => CreateTableWindow.Display(Event.current.mousePosition + position.position + Vector2.up * 20, activeSettings.ActiveSettings);
             });
             var searchField = VisualElementFactory
                               .Create<ToolbarSearchField>("TablesSearchField", "searchField", "themeTable")
@@ -332,6 +332,10 @@ namespace UnityLocalization {
             filteredTables = settings.Tables.Where(table => table.TableName.ToLowerInvariant().Contains(tableSearchQuery.ToLowerInvariant()) ||
                                                             tableSearchQuery.ToLowerInvariant().Contains(table.TableName.ToLowerInvariant()))
                                      .ToList();
+        }
+
+        internal void OnTablesDirty() {
+            UpdateTableFilter();
         }
 
         private static void LoadStyles() {

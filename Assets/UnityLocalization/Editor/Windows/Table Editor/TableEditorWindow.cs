@@ -8,7 +8,7 @@ using UnityLocalization.Utility;
 
 namespace UnityLocalization {
     public class TableEditorWindow : EditorWindow {
-        [SerializeReference] private LocalizationSettings settings;
+        [SerializeReference] internal LocalizationSettings settings;
         private VisualElement tabContainer;
         private VisualElement tabContents;
         [SerializeField] private int activeTabIndex;
@@ -73,7 +73,7 @@ namespace UnityLocalization {
         }
 
         private void CreateTable() {
-            RecreateGUI();
+            CreateTableWindow.Display(Event.current.mousePosition + position.position + Vector2.up * 20, settings);
         }
 
         private void TabClicked(Tab tab) {
@@ -92,13 +92,17 @@ namespace UnityLocalization {
             tabContents.AddGet<Label>("Contents", "contents").Do(label => { label.text = tab.TabName; });
         }
 
+        internal void OnTablesDirty() {
+            RecreateGUI();
+        }
+
         private void RecreateGUI() {
             rootVisualElement.Clear();
             CreateGUI();
         }
         
         public static void Display(LocalizationSettings settings) {
-            var window = FindMatching(settings);
+            var window = Utils.FindMatching<TableEditorWindow>(editorWindow => editorWindow.settings == settings);
             if (window == null) {
                 window = CreateInstance<TableEditorWindow>();
                 window.settings = settings;
@@ -133,10 +137,6 @@ namespace UnityLocalization {
             } catch {
                 window.deferStylesheetLoading = true;
             }
-        }
-
-        internal static TableEditorWindow FindMatching(LocalizationSettings settings) {
-            return Resources.FindObjectsOfTypeAll<TableEditorWindow>().FirstOrDefault(editorWindow => editorWindow.settings == settings);
         }
     }
 }
