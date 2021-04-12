@@ -2,6 +2,17 @@
   display: none;
 }
 
+.bold {
+  -unity-font-style: bold;
+}
+.bold.italic {
+  -unity-font-style: bold-and-italic;
+}
+
+.italic {
+  -unity-font-style: italic;
+}
+
 Label.placeholderLabel {
   color: #5E5E5E;
   font-size: 12px;
@@ -87,7 +98,6 @@ TextField.unity-base-field.unity-base-text-field.unity-text-field > Label {
 }
 :root > #TabContents {
   flex-grow: 1;
-  padding: 0 4px 4px;
   background-color: #3a3a3a;
 }
 :root > #TabContents.no-tables {
@@ -129,6 +139,39 @@ Tab Label.tab-label {
   padding-left: 12px;
   padding-right: 12px;
   -unity-text-align: middle-center;
+}
+
+.table {
+  flex-direction: row;
+}
+.table .table-col {
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+}
+.table .table-col .table-cell {
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  justify-content: center;
+  border-width: 1px;
+  border-color: #1b1b1b;
+  background-color: rgba(27, 27, 27, 0.3);
+  margin-left: -1px;
+  margin-top: -1px;
+  min-height: 28px;
+  min-width: 100px;
+}
+.table .table-col .table-cell > .table-cell-edit-field {
+  margin: -2px 0 -2px -1px;
+  padding: 0;
+}
+.table .table-col .table-cell#CreateEntryCell {
+  -unity-font-style: italic;
+}
+.table .table-col .table-cell#CreateEntryCell > Label.table-cell-label {
+  color: #ababab;
 }
 
 /*# sourceMappingURL=TableEditorWindow.uss.map */

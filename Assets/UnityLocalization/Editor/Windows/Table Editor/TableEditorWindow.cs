@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -16,6 +17,10 @@ namespace UnityLocalization {
         private List<Tab> tabs;
         private bool deferStylesheetLoading;
         private bool stylesheetsLoaded;
+
+        private VisualElement keyColumn;
+        private List<VisualElement> localeColumns;
+        private TableCell createEntry;
 
         private void OnEnable() {
         }
@@ -60,7 +65,10 @@ namespace UnityLocalization {
             topContainer = new VisualElement {name = "TopContainer"};
             tabContainer = new ScrollView(ScrollViewMode.Horizontal) {name = "TabContainer"};
             foreach (var table in tables) {
-                tabs.Add(tabContainer.AddGet(new Tab(table.TableName)).Do(tab => { tab.Clicked += () => TabClicked(tab); }));
+                tabs.Add(tabContainer.AddGet(new Tab(table.TableName)).Do(tab => {
+                    tab.Clicked += () => TabClicked(tab);
+                    tab.userData = table;
+                }));
             }
             if (activeTabIndex >= 0 && activeTabIndex < tabs.Count) {
                 tabs[activeTabIndex].AddToClassList("active");
@@ -100,9 +108,106 @@ namespace UnityLocalization {
 
         private void LoadTabContent(Tab tab) {
             tabContents.Clear();
-            tabContents.Add(new TableCell("Hello, World!", true));
-            // var header = VisualElementFactory.TableRow("TableEditor-TableHeader", classNames: null, );
-            tabContents.AddGet<Label>("Contents", "contents").Do(label => { label.text = tab.TabName; });
+            if(settings == null) return;
+
+            var table = tab.userData as LocalizationTable;
+            Debug.Assert(table != null);
+            var entries = table.Entries;
+            
+            var scrollView = new ScrollView(ScrollViewMode.VerticalAndHorizontal);
+            keyColumn = VisualElementFactory.Create<VisualElement>(null, "table-col").Do(element => {
+                element.Add(new TableCell("key", false));
+                // todo: foreach key add
+                for (var i = 0; i < entries.Count; i++) {
+                    element.Add(MakeKeyCell(table, entries[i].Key, i));
+                }
+                createEntry = new TableCell("Add...", true) {name = "CreateEntryCell"};
+                createEntry.OnValueChanged += CreateEntry;
+                createEntry.OnBeginEdit += field => {
+                    field.value = "";
+                };
+                createEntry.OnCancelEdit += field => {
+                    createEntry.Text = "Add...";
+                };
+                element.Add(createEntry);
+            });
+            var locales = settings.Locales;
+            localeColumns = new List<VisualElement>(locales.Count);
+            for (var i = 0; i < locales.Count; i++) {
+                var col = i;
+                var locale = locales[i];
+                var localeColumn = VisualElementFactory.Create<VisualElement>(null, "table-col").Do(element => {
+                    element.Add(new TableCell(locale.EnglishName, false));
+                    for (var j = 0; j < entries.Count; j++) {
+                        var row = j;
+                        element.Add(new TableCell(entries[row].Values[col], true).Do(cell => {
+                            cell.OnValueChanged += newValue => {
+                                table.UpdateLocalization(row, col, newValue);
+                            };
+                        }));
+                    }
+
+                    // Add empty cell for Add entry cell
+                    element.Add(new TableCell("", false));
+                });
+                localeColumns.Add(localeColumn);
+            }
+
+            var tableElement = new VisualElement {name = "Table"};
+            tableElement.AddToClassList("table");
+            tableElement.Add(keyColumn);
+            foreach (var column in localeColumns) {
+                tableElement.Add(column);
+            }
+            tableElement.Add(scrollView);
+            scrollView.Add(tableElement);
+            tabContents.Add(scrollView);
+        }
+
+        private void CreateEntry(string key) {
+            createEntry.Text = "Add...";
+            
+            if (string.IsNullOrWhiteSpace(key)) {
+                return;
+            }
+
+            var selectedTable = tabs[activeTabIndex].userData as LocalizationTable;
+            Debug.Assert(selectedTable != null);
+            if(selectedTable.Entries.Any(entry => string.Equals(entry.Key, key, StringComparison.InvariantCulture)))
+                return;
+            
+            CreateEntryImpl(selectedTable, key);
+        }
+
+        private void CreateEntryImpl(LocalizationTable table, string key) {
+            // skipping header and "Add..." cell
+            var index = keyColumn.childCount - 1;
+            table.AddKey(key);
+            keyColumn.Insert(index, MakeKeyCell(table, key, index - 1));
+            for (var i = 0; i < localeColumns.Count; i++) {
+                var col = i;
+                localeColumns[i].Insert(index, new TableCell("", true).Do(cell => {
+                    cell.OnValueChanged += newValue => {
+                        table.UpdateLocalization(index-1, col, newValue);
+                    };
+                }));
+            }
+        }
+
+        private TableCell MakeKeyCell(LocalizationTable table, string key, int row) {
+            return new TableCell(key, true).Do(cell => {
+                cell.OnValueChanged += newKey => {
+                    table.UpdateKey(row, newKey);
+                };
+                cell.AddManipulator(new ContextualMenuManipulator(ctx => KeyContextMenu(ctx, table, row)));
+            });
+        }
+
+        private void KeyContextMenu(ContextualMenuPopulateEvent ctx, LocalizationTable table, int row) {
+            ctx.menu.AppendAction("Delete", action => {
+                table.RemoveKey(row);
+                rootVisualElement.schedule.Execute(RecreateGUI);
+            });
         }
 
         internal void OnTablesDirty() {

@@ -10,7 +10,7 @@ $accent: #ff5050;
     & > #TopContainer {
         flex-direction: row;
         background-color: $darker;
-        
+
         & > #TabContainer {
             flex-grow: 1;
 
@@ -23,7 +23,7 @@ $accent: #ff5050;
                 display: none;
             }
         }
-        
+
         & > #CreateTableButton {
             align-items: center;
             justify-content: center;
@@ -32,16 +32,17 @@ $accent: #ff5050;
             width: 20px;
             background-color: $darker;
             border-color: $darker;
-            
+
             &:hover {
                 background-color: $dark;
                 border-color: $dark;
             }
+
             &:active {
                 background-color: lighten($dark, 7%);
                 border-color: lighten($dark, 7%);
             }
-            
+
             & > #CreateTableButton-Image {
                 height: 10px;
                 width: 10px;
@@ -53,16 +54,17 @@ $accent: #ff5050;
 
     & > #TabContents {
         flex-grow: 1;
-        padding: 0 4px 4px;
         background-color: $dark;
 
         &.no-tables {
             justify-content: center;
+
             Label#NoTablesLabel {
                 padding: 8px 0;
                 align-self: center;
                 font-size: 24px;
             }
+
             Button#NoTablesButton {
                 padding: 24px 0;
                 align-self: center;
@@ -105,5 +107,41 @@ Tab {
     Label.tab-label {
         @include padding-x(12px);
         -unity-text-align: middle-center;
+    }
+}
+
+.table {
+    flex-direction: row;
+    .table-col {
+        flex-direction: column;
+        padding: 0;
+        margin: 0;
+
+        .table-cell {
+            @include padding-x(8px);
+            @include padding-y(4px);
+
+            justify-content: center;
+            border-width: 1px;
+            border-color: $darker;
+            background-color: rgba($darker, 0.3);
+            margin-left: -1px;
+            margin-top: -1px;
+            min-height: 28px;
+            min-width: 100px;
+            
+            & > .table-cell-edit-field {
+                margin: -2px 0 -2px -1px;
+                padding: 0;
+                //min-height: 18px;
+            }
+            
+            &#CreateEntryCell {
+                @include italic;
+                & > Label.table-cell-label {
+                    color: #ababab;
+                }
+            }
+        }
     }
 }

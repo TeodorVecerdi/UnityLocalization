@@ -46,11 +46,6 @@ namespace UnityLocalization.Utility {
             element.Add(other);
             return other;
         }
-
-        public static T Do<T>(this T element, Action action) where T : VisualElement {
-            action?.Invoke();
-            return element;
-        }
         
         public static T Do<T>(this T element, Action<T> action) where T : VisualElement {
             action?.Invoke(element);

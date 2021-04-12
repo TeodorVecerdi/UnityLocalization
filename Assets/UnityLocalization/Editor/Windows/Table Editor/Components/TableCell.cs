@@ -18,6 +18,8 @@ namespace UnityLocalization {
 
         public event Action OnNextCellSelected;
         public event Action<string> OnValueChanged;
+        public event Action<TextField> OnBeginEdit;
+        public event Action<TextField> OnCancelEdit;
 
         private readonly Label label;
         private readonly TextField editField;
@@ -41,6 +43,10 @@ namespace UnityLocalization {
                 MakeEditField();
                 Add(editField);
             }
+        }
+
+        public void BeginEdit() {
+            OnStartEdit();
         }
 
         private void OnFinishEdit(string value) {
@@ -67,6 +73,7 @@ namespace UnityLocalization {
             label.AddToClassList("hidden");
             editField.RemoveFromClassList("hidden");
             schedule.Execute(() => editField[0].Focus());
+            OnBeginEdit?.Invoke(editField);
         }
         
         private void OnBlur(BlurEvent evt) {
@@ -80,8 +87,10 @@ namespace UnityLocalization {
                 OnNextCellSelected?.Invoke();
             } else if (evt.keyCode == KeyCode.Return)
                 OnFinishEdit(editField.value);
-            else if (evt.keyCode == KeyCode.Escape)
+            else if (evt.keyCode == KeyCode.Escape) {
                 OnFinishEdit(Text);
+                OnCancelEdit?.Invoke(editField);
+            }
         }
     }
 }

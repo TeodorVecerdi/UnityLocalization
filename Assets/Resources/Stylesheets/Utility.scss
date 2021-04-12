@@ -4,6 +4,16 @@
     display: none;
 }
 
+.bold {
+    -unity-font-style: bold;
+    &.italic {
+        -unity-font-style: bold-and-italic;
+    }
+}
+.italic {
+    -unity-font-style: italic;
+}
+
 Label.placeholderLabel {
     color: #5E5E5E;
     font-size: 12px;
@@ -14,6 +24,7 @@ Label.placeholderLabel {
 Button {
     border-radius: 0;
     height: 24px;
+
     &.large {
         height: 32px;
     }
@@ -23,7 +34,7 @@ TextField.unity-base-field.unity-base-text-field.unity-text-field {
     &.textFieldWithPlaceholder {
         min-height: 20px;
     }
-    
+
     & > TextInput {
         border-radius: 0;
 
@@ -42,6 +53,7 @@ TextField.unity-base-field.unity-base-text-field.unity-text-field {
 
     &.breakLabel {
         flex-wrap: wrap;
+
         & > Label {
             flex-grow: 1;
             padding-right: 20000px;
@@ -59,16 +71,28 @@ TextField.unity-base-field.unity-base-text-field.unity-text-field {
     padding-left: $padding;
     padding-right: $padding;
 }
+
 @mixin padding-y($padding) {
     padding-top: $padding;
     padding-bottom: $padding;
 }
+
 @mixin margin-x($margin) {
     margin-left: $margin;
     margin-right: $margin;
 }
+
 @mixin margin-y($margin) {
     margin-top: $margin;
     margin-bottom: $margin;
 }
 
+@mixin bold() {
+    -unity-font-style: bold;
+}
+@mixin bold-and-italic() {
+    -unity-font-style: bold-and-italic;
+}
+@mixin italic() {
+    -unity-font-style: italic;
+}
