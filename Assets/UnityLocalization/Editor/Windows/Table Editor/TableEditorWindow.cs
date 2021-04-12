@@ -39,34 +39,32 @@ namespace UnityLocalization {
                 stylesheetsLoaded = true;
             }
 
-            Debug.Log("CreateGUI called");
-
-            tabs = new List<Tab>();
-            tabContainer = new ScrollView(ScrollViewMode.Horizontal) {name = "TabContainer"};
-            tabContents = new VisualElement {name = "TabContents"};
 
             var tables = settings.Tables;
             var anyTable = tables.Count > 0;
-            if (anyTable) {
-                foreach (var table in tables) {
-                    tabs.Add(tabContainer.AddGet(new Tab(table.TableName)).Do(tab => { tab.Clicked += () => TabClicked(tab); }));
-                }
-            } else {
-                tabContainer.AddToClassList("no-tables");
+            if (!anyTable) {
+                tabContents = new VisualElement {name = "TabContents"};
                 tabContents.AddToClassList("no-tables");
                 tabContents.AddGet<Label>("NoTablesLabel").Do(label => label.text = "No tables");
                 tabContents.AddGet<Button>("NoTablesButton", "large").Do(button => {
                     button.clicked += CreateTable;
                     button.text = "Create Table";
                 });
+                rootVisualElement.Add(tabContents);
+                return;
             }
-
-            if (anyTable) {
-                if (activeTabIndex >= 0 && activeTabIndex < tabs.Count) {
-                    tabs[activeTabIndex].AddToClassList("active");
-                    LoadTabContent(tabs[activeTabIndex]);
-                } else TabClicked(tabs[0]);
+            
+            tabs = new List<Tab>();
+            tabContents = new VisualElement {name = "TabContents"};
+            tabContainer = new ScrollView(ScrollViewMode.Horizontal) {name = "TabContainer"};
+            
+            foreach (var table in tables) {
+                tabs.Add(tabContainer.AddGet(new Tab(table.TableName)).Do(tab => { tab.Clicked += () => TabClicked(tab); }));
             }
+            if (activeTabIndex >= 0 && activeTabIndex < tabs.Count) {
+                tabs[activeTabIndex].AddToClassList("active");
+                LoadTabContent(tabs[activeTabIndex]);
+            } else TabClicked(tabs[0]);
 
             rootVisualElement.Add(tabContainer);
             rootVisualElement.Add(tabContents);

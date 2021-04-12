@@ -261,7 +261,7 @@ namespace UnityLocalization {
                     AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(selectedTable));
                     Utils.SaveChanges();
                     selectedTable = null;
-                    UpdateTableFilter();
+                    Utils.DirtyTables(settings);
                 }
             }
 
