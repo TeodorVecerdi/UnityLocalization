@@ -9,6 +9,7 @@ using UnityLocalization.Utility;
 namespace UnityLocalization {
     public class TableEditorWindow : EditorWindow {
         [SerializeReference] internal LocalizationSettings settings;
+        private VisualElement topContainer;
         private VisualElement tabContainer;
         private VisualElement tabContents;
         [SerializeField] private int activeTabIndex;
@@ -33,8 +34,8 @@ namespace UnityLocalization {
             if (deferStylesheetLoading) {
                 var utilityStylesheet = Resources.Load<StyleSheet>("Stylesheets/Utility");
                 var stylesheet = Resources.Load<StyleSheet>("Stylesheets/TableEditorWindow");
-                rootVisualElement.styleSheets.Add(utilityStylesheet);
-                rootVisualElement.styleSheets.Add(stylesheet);
+                this.AddStylesheet(utilityStylesheet);
+                this.AddStylesheet(stylesheet);
                 deferStylesheetLoading = false;
                 stylesheetsLoaded = true;
             }
@@ -56,22 +57,34 @@ namespace UnityLocalization {
             
             tabs = new List<Tab>();
             tabContents = new VisualElement {name = "TabContents"};
+            topContainer = new VisualElement {name = "TopContainer"};
             tabContainer = new ScrollView(ScrollViewMode.Horizontal) {name = "TabContainer"};
-            
             foreach (var table in tables) {
                 tabs.Add(tabContainer.AddGet(new Tab(table.TableName)).Do(tab => { tab.Clicked += () => TabClicked(tab); }));
             }
             if (activeTabIndex >= 0 && activeTabIndex < tabs.Count) {
                 tabs[activeTabIndex].AddToClassList("active");
                 LoadTabContent(tabs[activeTabIndex]);
-            } else TabClicked(tabs[0]);
+            } else {
+                activeTabIndex = 0;
+                tabs[activeTabIndex].AddToClassList("active");
+                LoadTabContent(tabs[activeTabIndex]);
+            }
 
-            rootVisualElement.Add(tabContainer);
+            var createTableButton = new Button(CreateTable) {name = "CreateTableButton"};
+            createTableButton.AddGet<VisualElement>("CreateTableButton-Image");
+            
+            topContainer.Add(tabContainer);
+            topContainer.Add(createTableButton);
+
+            rootVisualElement.Add(topContainer);
             rootVisualElement.Add(tabContents);
         }
 
         private void CreateTable() {
-            CreateTableWindow.Display(Event.current.mousePosition + position.position + Vector2.up * 20, settings);
+            CreateTableWindow.Display(Event.current.mousePosition + position.position + Vector2.up * 20, settings, () => {
+                TabClicked(tabs[tabs.Count-1]);
+            });
         }
 
         private void TabClicked(Tab tab) {
@@ -129,8 +142,8 @@ namespace UnityLocalization {
             utility ??= Resources.Load<StyleSheet>("Stylesheets/Utility");
             style ??= Resources.Load<StyleSheet>("Stylesheets/TableEditorWindow");
             try {
-                window.rootVisualElement.styleSheets.Add(utility);
-                window.rootVisualElement.styleSheets.Add(style);
+                window.AddStylesheet(utility);
+                window.AddStylesheet(style);
                 window.stylesheetsLoaded = true;
             } catch {
                 window.deferStylesheetLoading = true;

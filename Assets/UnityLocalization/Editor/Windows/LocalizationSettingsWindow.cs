@@ -14,14 +14,13 @@ namespace UnityLocalization {
 
         [UnityEditor.Callbacks.DidReloadScripts]
         private static void Initialize() {
-            if (!HasOpenInstances<LocalizationSettingsWindow>()) return;
-
-            var window = GetWindow<LocalizationSettingsWindow>();
+            var window = Utils.Find<LocalizationSettingsWindow>();
+            if(window == null) return;
             var utilityStylesheet = Resources.Load<StyleSheet>("Stylesheets/Utility");
             var stylesheet = Resources.Load<StyleSheet>("Stylesheets/SettingsWindow");
             try {
-                window.rootVisualElement.styleSheets.Add(utilityStylesheet);
-                window.rootVisualElement.styleSheets.Add(stylesheet);
+                window.AddStylesheet(utilityStylesheet);
+                window.AddStylesheet(stylesheet);
             } catch {
                 window.deferStylesheetLoading = true;
             }
@@ -84,8 +83,8 @@ namespace UnityLocalization {
             if (deferStylesheetLoading) {
                 var utilityStylesheet = Resources.Load<StyleSheet>("Stylesheets/Utility");
                 var stylesheet = Resources.Load<StyleSheet>("Stylesheets/SettingsWindow");
-                rootVisualElement.styleSheets.Add(utilityStylesheet);
-                rootVisualElement.styleSheets.Add(stylesheet);
+                this.AddStylesheet(utilityStylesheet);
+                this.AddStylesheet(stylesheet);
                 deferStylesheetLoading = false;
             }
 
