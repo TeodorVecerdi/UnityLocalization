@@ -71,7 +71,7 @@ namespace UnityLocalization {
                 LoadTabContent(tabs[activeTabIndex]);
             }
 
-            var createTableButton = new Button(CreateTable) {name = "CreateTableButton"};
+            var createTableButton = new Button(CreateTable) {name = "CreateTableButton", tooltip = "Create table"};
             createTableButton.AddGet<VisualElement>("CreateTableButton-Image");
             
             topContainer.Add(tabContainer);
