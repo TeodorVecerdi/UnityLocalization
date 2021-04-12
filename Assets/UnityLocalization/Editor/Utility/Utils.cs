@@ -1,9 +1,12 @@
-﻿using UnityEditor;
+﻿using System;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityLocalization.Data;
+using Object = UnityEngine.Object;
 
 namespace UnityLocalization.Utility {
-    public static class Utils {
+    internal static class Utils {
         public static void RecordChange(LocalizationSettings settings, string action) {
             Undo.IncrementCurrentGroup();
             EditorUtility.SetDirty(settings);
@@ -21,6 +24,22 @@ namespace UnityLocalization.Utility {
         public static void SaveChanges() {
             AssetDatabase.Refresh();
             AssetDatabase.SaveAssets();
+        }
+
+        public static void DirtyTables(LocalizationSettings settings) {
+            var tableEditor = FindMatching<TableEditorWindow>(window => window.settings == settings);
+            var settingsEditor = Find<LocalizationSettingsWindow>();
+            if (tableEditor != null) tableEditor.OnTablesDirty();
+            if (settingsEditor != null) settingsEditor.OnTablesDirty();
+        }
+
+
+        public static T FindMatching<T>(Func<T, bool> predicate) where T : EditorWindow {
+            if (predicate == null) return Find<T>();
+            return Resources.FindObjectsOfTypeAll<T>().FirstOrDefault(predicate);
+        }
+        public static T Find<T>() where T : EditorWindow {
+            return Resources.FindObjectsOfTypeAll<T>().FirstOrDefault();
         }
     }
 }
