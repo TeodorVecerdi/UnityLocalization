@@ -36,6 +36,12 @@ namespace UnityLocalization.Utility {
             element.Add(t2);
             return element;
         }
+        
+        public static T Add<T>(this T element, VisualElement other) where T : VisualElement {
+            element.Add(other);
+            return element;
+        }
+        
         public static T AddGet<T>(this VisualElement element, string name = null, params string[] classNames) where T : VisualElement, new() {
             var t = Create<T>(name, classNames);
             element.Add(t);

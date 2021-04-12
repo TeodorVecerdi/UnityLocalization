@@ -136,10 +136,10 @@ Tab.active {
   background-color: #3a3a3a;
   border-top-color: #ff5050;
 }
-Tab.active Label.tab-label {
+Tab:hover.active Label.tab-label {
   padding-right: 16px;
 }
-Tab.active Button.tab-delete-button {
+Tab:hover.active Button.tab-delete-button {
   position: absolute;
   right: 2px;
   display: flex;

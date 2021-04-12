@@ -45,7 +45,6 @@ namespace UnityLocalization {
                 stylesheetsLoaded = true;
             }
 
-
             var tables = settings.Tables;
             var anyTable = tables.Count > 0;
             if (!anyTable) {
@@ -59,7 +58,7 @@ namespace UnityLocalization {
                 rootVisualElement.Add(tabContents);
                 return;
             }
-            
+
             tabs = new List<Tab>();
             tabContents = new VisualElement {name = "TabContents"};
             topContainer = new VisualElement {name = "TopContainer"};
@@ -71,6 +70,7 @@ namespace UnityLocalization {
                     tab.userData = table;
                 }));
             }
+
             if (activeTabIndex >= 0 && activeTabIndex < tabs.Count) {
                 tabs[activeTabIndex].AddToClassList("active");
                 LoadTabContent(tabs[activeTabIndex]);
@@ -82,7 +82,7 @@ namespace UnityLocalization {
 
             var createTableButton = new Button(CreateTable) {name = "CreateTableButton", tooltip = "Create table"};
             createTableButton.AddGet<VisualElement>("CreateTableButton-Image");
-            
+
             topContainer.Add(tabContainer);
             topContainer.Add(createTableButton);
 
@@ -91,11 +91,9 @@ namespace UnityLocalization {
         }
 
         private void CreateTable() {
-            CreateTableWindow.Display(Event.current.mousePosition + position.position + Vector2.up * 20, settings, () => {
-                TabClicked(tabs[tabs.Count-1]);
-            });
+            CreateTableWindow.Display(Event.current.mousePosition + position.position + Vector2.up * 20, settings, () => { TabClicked(tabs[tabs.Count - 1]); });
         }
-        
+
         private void DeleteTable(LocalizationTable table) {
             if (EditorUtility.DisplayDialog("Confirm table removal", "This action cannot be undone. Are you sure you want to delete the table?", "Yes", "No")) {
                 settings.RemoveTable(table);
@@ -118,48 +116,45 @@ namespace UnityLocalization {
 
         private void LoadTabContent(Tab tab) {
             tabContents.Clear();
-            if(settings == null) return;
+            if (settings == null) return;
 
             var table = tab.userData as LocalizationTable;
             Debug.Assert(table != null);
             var entries = table.Entries;
-            
+
             var scrollView = new ScrollView(ScrollViewMode.VerticalAndHorizontal);
-            keyColumn = VisualElementFactory.Create<VisualElement>(null, "table-col").Do(element => {
-                element.Add(new TableCell("key", false));
-                // todo: foreach key add
-                for (var i = 0; i < entries.Count; i++) {
-                    element.Add(MakeKeyCell(table, entries[i].Key, i));
-                }
-                createEntry = new TableCell("Add...", true) {name = "CreateEntryCell"};
-                createEntry.OnValueChanged += CreateEntry;
-                createEntry.OnBeginEdit += field => {
-                    field.value = "";
-                };
-                createEntry.OnCancelEdit += field => {
-                    createEntry.Text = "Add...";
-                };
-                element.Add(createEntry);
-            });
+            keyColumn = VisualElementFactory.Create<VisualElement>(null, "table-col");
+            keyColumn.Add(new TableCell("key", false));
+
+            for (var i = 0; i < entries.Count; i++) {
+                keyColumn.Add(MakeKeyCell(table, entries[i].Key, i));
+            }
+
+            createEntry = new TableCell("Add...", true) {name = "CreateEntryCell"};
+            createEntry.OnValueChanged += CreateEntry;
+            createEntry.OnBeginEdit += field => { field.value = ""; };
+            createEntry.OnCancelEdit += field => { createEntry.Text = "Add..."; };
+            keyColumn.Add(createEntry);
+
             var locales = settings.Locales;
             localeColumns = new List<VisualElement>(locales.Count);
             for (var i = 0; i < locales.Count; i++) {
                 var col = i;
                 var locale = locales[i];
-                var localeColumn = VisualElementFactory.Create<VisualElement>(null, "table-col").Do(element => {
-                    element.Add(new TableCell(locale.EnglishName, false));
-                    for (var j = 0; j < entries.Count; j++) {
-                        var row = j;
-                        element.Add(new TableCell(entries[row].Values[col], true).Do(cell => {
-                            cell.OnValueChanged += newValue => {
-                                table.UpdateLocalization(row, col, newValue);
-                            };
-                        }));
-                    }
+                var isDefaultLocale = locale.Equals(settings.DefaultLocale);
+                var localeColumn = VisualElementFactory.Create<VisualElement>(null, "table-col");
+                localeColumn.Add(new TableCell($"{locale.EnglishName}{(isDefaultLocale ? " - Default" : "")}", false).Do(cell => {
+                    if (isDefaultLocale) cell.AddToClassList("bold");
+                }));
+                for (var j = 0; j < entries.Count; j++) {
+                    var row = j;
+                    localeColumn.Add(new TableCell(entries[row].Values[col], true).Do(cell => {
+                        cell.OnValueChanged += newValue => { table.UpdateLocalization(row, col, newValue); };
+                    }));
+                }
 
-                    // Add empty cell for Add entry cell
-                    element.Add(new TableCell("", false));
-                });
+                // Add empty cell for Add entry cell
+                localeColumn.Add(new TableCell("", false));
                 localeColumns.Add(localeColumn);
             }
 
@@ -169,6 +164,7 @@ namespace UnityLocalization {
             foreach (var column in localeColumns) {
                 tableElement.Add(column);
             }
+
             tableElement.Add(scrollView);
             scrollView.Add(tableElement);
             tabContents.Add(scrollView);
@@ -176,16 +172,16 @@ namespace UnityLocalization {
 
         private void CreateEntry(string key) {
             createEntry.Text = "Add...";
-            
+
             if (string.IsNullOrWhiteSpace(key)) {
                 return;
             }
 
             var selectedTable = tabs[activeTabIndex].userData as LocalizationTable;
             Debug.Assert(selectedTable != null);
-            if(selectedTable.Entries.Any(entry => string.Equals(entry.Key, key, StringComparison.InvariantCulture)))
+            if (selectedTable.Entries.Any(entry => string.Equals(entry.Key, key, StringComparison.InvariantCulture)))
                 return;
-            
+
             CreateEntryImpl(selectedTable, key);
         }
 
@@ -196,19 +192,13 @@ namespace UnityLocalization {
             keyColumn.Insert(index, MakeKeyCell(table, key, index - 1));
             for (var i = 0; i < localeColumns.Count; i++) {
                 var col = i;
-                localeColumns[i].Insert(index, new TableCell("", true).Do(cell => {
-                    cell.OnValueChanged += newValue => {
-                        table.UpdateLocalization(index-1, col, newValue);
-                    };
-                }));
+                localeColumns[i].Insert(index, new TableCell("", true).Do(cell => { cell.OnValueChanged += newValue => { table.UpdateLocalization(index - 1, col, newValue); }; }));
             }
         }
 
         private TableCell MakeKeyCell(LocalizationTable table, string key, int row) {
             return new TableCell(key, true).Do(cell => {
-                cell.OnValueChanged += newKey => {
-                    table.UpdateKey(row, newKey);
-                };
+                cell.OnValueChanged += newKey => { table.UpdateKey(row, newKey); };
                 cell.AddManipulator(new ContextualMenuManipulator(ctx => KeyContextMenu(ctx, table, row)));
             });
         }
@@ -223,7 +213,7 @@ namespace UnityLocalization {
         internal void OnTablesDirty() {
             RecreateGUI();
         }
-        
+
         internal void OnLocalesDirty() {
             RecreateGUI();
         }
@@ -232,7 +222,7 @@ namespace UnityLocalization {
             rootVisualElement.Clear();
             CreateGUI();
         }
-        
+
         public static void Display(LocalizationSettings settings) {
             var window = Utils.FindMatching<TableEditorWindow>(editorWindow => editorWindow.settings == settings);
             if (window == null) {
