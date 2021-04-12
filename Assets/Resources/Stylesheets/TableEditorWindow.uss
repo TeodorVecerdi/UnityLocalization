@@ -8,10 +8,26 @@
   height: 24px;
   flex-direction: row;
 }
+:root > #TabContainer.no-tables #unity-content-container.unity-scroll-view__content-container {
+  display: none;
+}
 :root > #TabContents {
   flex-grow: 1;
   padding: 0 4px 4px;
   background-color: #3a3a3a;
+}
+:root > #TabContents.no-tables {
+  justify-content: center;
+}
+:root > #TabContents.no-tables Label#NoTablesLabel {
+  padding: 8px 0;
+  align-self: center;
+  font-size: 24px;
+}
+:root > #TabContents.no-tables Button#NoTablesButton {
+  padding: 24px 0;
+  align-self: center;
+  min-width: 200px;
 }
 :root > #TabContents .contents {
   font-size: 40px;

@@ -7,9 +7,14 @@ $accent: #ff5050;
 
     & > #TabContainer {
         background-color: $darker;
+
         #unity-content-container.unity-scroll-view__content-container {
             height: 24px;
             flex-direction: row;
+        }
+        
+        &.no-tables #unity-content-container.unity-scroll-view__content-container {
+            display: none;
         }
     }
 
@@ -17,7 +22,22 @@ $accent: #ff5050;
         flex-grow: 1;
         padding: 0 4px 4px;
         background-color: $dark;
-        
+
+        &.no-tables {
+            justify-content: center;
+            Label#NoTablesLabel {
+                padding: 8px 0;
+                align-self: center;
+                font-size: 24px;
+            }
+            Button#NoTablesButton {
+                padding: 24px 0;
+                align-self: center;
+                min-width: 200px;
+                //max-width: 100vw;
+            }
+        }
+
         & .contents {
             font-size: 40px;
             -unity-text-align: middle-center;
@@ -28,25 +48,27 @@ $accent: #ff5050;
 Tab {
     justify-content: center;
     align-items: center;
-    
+
     margin-right: 2px;
     min-width: 64px;
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
-    
+
     border-top-width: 2px;
     border-top-color: $darker;
     border-bottom-width: 1px;
     border-bottom-color: $darker;
     background-color: $darker;
-    
+
     &.active {
         background-color: $dark;
         border-top-color: $accent;
+
         Label.tab-label {
             //-unity-font-style: bold;
         }
     }
+
     Label.tab-label {
         -unity-text-align: middle-center;
     }
