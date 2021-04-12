@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityLocalization.Data;
@@ -9,14 +8,28 @@ using UnityLocalization.Utility;
 namespace UnityLocalization {
     public class TableEditorWindow : EditorWindow {
         public static void Display(LocalizationSettings settings) {
-            var window = CreateInstance<TableEditorWindow>();
-            window.settings = settings;
-            window.titleContent = new GUIContent("Table Editor");
+            TableEditorWindow window = null;
+            if (HasOpenInstances<TableEditorWindow>()) {
+                var allWindows = Resources.FindObjectsOfTypeAll<TableEditorWindow>();
+                foreach (var tableEditorWindow in allWindows) {
+                    if (tableEditorWindow.settings == settings) {
+                        window = tableEditorWindow;
+                        break;
+                    }
+                }
+            }
+
+            if (window == null) {
+                window = CreateInstance<TableEditorWindow>();
+                window.settings = settings;
+                window.titleContent = new GUIContent("Table Editor");
+            }
+
             window.Show();
             Initialize();
         }
 
-        [DidReloadScripts]
+        [UnityEditor.Callbacks.DidReloadScripts]
         private static void Initialize() {
             if (!HasOpenInstances<TableEditorWindow>()) return;
             var window = GetWindow<TableEditorWindow>();
@@ -59,13 +72,10 @@ namespace UnityLocalization {
             tabContainer = new ScrollView(ScrollViewMode.Horizontal) {name = "TabContainer"};
             tabContents = new VisualElement {name = "TabContents"};
 
-            tabs.Add(tabContainer.AddGet(new Tab("Hello")).Do(tab => {
-                tab.Clicked += () => TabClicked(tab);
-            }));
+            tabs.Add(tabContainer.AddGet(new Tab("Hello")).Do(tab => { tab.Clicked += () => TabClicked(tab); }));
             tabs.Add(tabContainer.AddGet(new Tab("World")).Do(tab => { tab.Clicked += () => TabClicked(tab); }));
             tabs.Add(tabContainer.AddGet(new Tab("Tab3")).Do(tab => { tab.Clicked += () => TabClicked(tab); }));
             tabs.Add(tabContainer.AddGet(new Tab("Tab4")).Do(tab => { tab.Clicked += () => TabClicked(tab); }));
-
 
             if (activeTabIndex >= 0 && activeTabIndex < tabs.Count) {
                 tabs[activeTabIndex].AddToClassList("active");
@@ -77,8 +87,8 @@ namespace UnityLocalization {
         }
 
         private void TabClicked(Tab tab) {
-            if(tabs[activeTabIndex] == tab) return;
-            
+            if (tabs[activeTabIndex] == tab) return;
+
             if (activeTabIndex < tabs.Count && activeTabIndex >= 0)
                 tabs[activeTabIndex].RemoveFromClassList("active");
             tab.AddToClassList("active");
@@ -89,9 +99,7 @@ namespace UnityLocalization {
 
         private void LoadTabContent(Tab tab) {
             tabContents.Clear();
-            tabContents.AddGet<Label>("Contents", "contents").Do(label => {
-                label.text = tab.TabName;
-            });
+            tabContents.AddGet<Label>("Contents", "contents").Do(label => { label.text = tab.TabName; });
         }
     }
 }
