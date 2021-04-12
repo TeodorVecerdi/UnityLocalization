@@ -15,10 +15,6 @@ namespace UnityLocalization {
                 tabName = value;
             }
         }
-
-        public Tab() : this(null) {
-        }
-
         public Tab(string tabName, Action onClick = null) {
             this.tabName = tabName;
             if (onClick != null) Clicked += onClick;
@@ -30,7 +26,7 @@ namespace UnityLocalization {
                 self.text = tabName;
             });
         }
-
+        
         private void OnClick() {
             Clicked?.Invoke();
         }

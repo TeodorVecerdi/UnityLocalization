@@ -100,6 +100,8 @@ namespace UnityLocalization {
 
         private void LoadTabContent(Tab tab) {
             tabContents.Clear();
+            tabContents.Add(new TableCell("Hello, World!", true));
+            // var header = VisualElementFactory.TableRow("TableEditor-TableHeader", classNames: null, );
             tabContents.AddGet<Label>("Contents", "contents").Do(label => { label.text = tab.TabName; });
         }
 
