@@ -27,8 +27,12 @@ $accent: #ff5050;
         & > #CreateTableButton {
             align-items: center;
             justify-content: center;
+            margin: 2px 0 2px 2px;
+            height: 20px;
+            width: 20px;
             background-color: $darker;
             border-color: $darker;
+            
             &:hover {
                 background-color: $dark;
                 border-color: $dark;
@@ -38,19 +42,9 @@ $accent: #ff5050;
                 border-color: lighten($dark, 7%);
             }
             
-
-            font-size: 0;
-            padding: 0;
-            margin: 2px 0 2px 2px;
-            height: 20px;
-            width: 20px;
-            
             & > #CreateTableButton-Image {
-                margin: 0;
-                padding: 0;
                 height: 10px;
                 width: 10px;
-                -unity-background-scale-mode: scale-to-fit;
                 -unity-background-image-tint-color: #c4c4c4;
                 background-image: resource("plus-thin");
             }

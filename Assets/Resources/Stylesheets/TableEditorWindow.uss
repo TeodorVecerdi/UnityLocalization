@@ -65,13 +65,11 @@ TextField.unity-base-field.unity-base-text-field.unity-text-field > Label {
 :root > #TopContainer > #CreateTableButton {
   align-items: center;
   justify-content: center;
-  background-color: #1b1b1b;
-  border-color: #1b1b1b;
-  font-size: 0;
-  padding: 0;
   margin: 2px 0 2px 2px;
   height: 20px;
   width: 20px;
+  background-color: #1b1b1b;
+  border-color: #1b1b1b;
 }
 :root > #TopContainer > #CreateTableButton:hover {
   background-color: #3a3a3a;
@@ -82,11 +80,8 @@ TextField.unity-base-field.unity-base-text-field.unity-text-field > Label {
   border-color: #4c4c4c;
 }
 :root > #TopContainer > #CreateTableButton > #CreateTableButton-Image {
-  margin: 0;
-  padding: 0;
   height: 10px;
   width: 10px;
-  -unity-background-scale-mode: scale-to-fit;
   -unity-background-image-tint-color: #c4c4c4;
   background-image: resource("plus-thin");
 }
