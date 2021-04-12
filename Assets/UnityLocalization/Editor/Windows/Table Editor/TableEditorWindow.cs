@@ -12,10 +12,10 @@ namespace UnityLocalization {
             if (HasOpenInstances<TableEditorWindow>()) {
                 var allWindows = Resources.FindObjectsOfTypeAll<TableEditorWindow>();
                 foreach (var tableEditorWindow in allWindows) {
-                    if (tableEditorWindow.settings == settings) {
-                        window = tableEditorWindow;
-                        break;
-                    }
+                    if (tableEditorWindow.settings != settings) continue;
+                    
+                    window = tableEditorWindow;
+                    break;
                 }
             }
 
@@ -32,12 +32,23 @@ namespace UnityLocalization {
         [UnityEditor.Callbacks.DidReloadScripts]
         private static void Initialize() {
             if (!HasOpenInstances<TableEditorWindow>()) return;
-            var window = GetWindow<TableEditorWindow>();
+            
+            var allWindows = Resources.FindObjectsOfTypeAll<TableEditorWindow>();
             var utilityStylesheet = Resources.Load<StyleSheet>("Stylesheets/Utility");
             var stylesheet = Resources.Load<StyleSheet>("Stylesheets/TableEditorWindow");
+            
+            foreach (var window in allWindows) {
+                InitializeWindow(window, utilityStylesheet, stylesheet);
+            }
+        }
+
+        private static void InitializeWindow(TableEditorWindow window, StyleSheet utility = null, StyleSheet style = null) {
+            utility ??= Resources.Load<StyleSheet>("Stylesheets/Utility");
+            style ??= Resources.Load<StyleSheet>("Stylesheets/TableEditorWindow");
             try {
-                window.rootVisualElement.styleSheets.Add(utilityStylesheet);
-                window.rootVisualElement.styleSheets.Add(stylesheet);
+                window.rootVisualElement.styleSheets.Add(utility);
+                window.rootVisualElement.styleSheets.Add(style);
+                window.stylesheetsLoaded = true;
             } catch {
                 window.deferStylesheetLoading = true;
             }
@@ -49,13 +60,14 @@ namespace UnityLocalization {
         [SerializeField] private int activeTabIndex;
         private List<Tab> tabs;
         private bool deferStylesheetLoading;
+        private bool stylesheetsLoaded;
 
         private void OnEnable() {
         }
 
         private void CreateGUI() {
-            if (settings == null) {
-                Initialize();
+            if (settings == null || !stylesheetsLoaded) {
+                InitializeWindow(this);
                 OnEnable();
             }
 
@@ -67,6 +79,7 @@ namespace UnityLocalization {
                 rootVisualElement.styleSheets.Add(utilityStylesheet);
                 rootVisualElement.styleSheets.Add(stylesheet);
                 deferStylesheetLoading = false;
+                stylesheetsLoaded = true;
             }
 
             tabContainer = new ScrollView(ScrollViewMode.Horizontal) {name = "TabContainer"};
