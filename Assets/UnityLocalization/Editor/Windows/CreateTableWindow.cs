@@ -2,47 +2,47 @@
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UIElements;
 using UnityLocalization.Data;
 using UnityLocalization.Utility;
 
 namespace UnityLocalization {
     public class CreateTableWindow : EditorWindow {
-        public static void Display(Vector2 position, LocalizationSettingsWindow owner, LocalizationSettings settings) {
+        public static void Display(Vector2 position, LocalizationSettings settings, Action onCreate = null) {
             var window = CreateInstance<CreateTableWindow>();
             window.settings = settings;
-            window.owner = owner;
+            window.onCreate = onCreate;
             window.titleContent = new GUIContent("Create Table");
             window.Initialize();
-            // window.Show();
             window.ShowAsDropDown(new Rect(position, Vector2.one), new Vector2(200, 82));
         }
 
         [UnityEditor.Callbacks.DidReloadScripts]
         private static void InitializeOnReload() {
-            if (!HasOpenInstances<CreateTableWindow>()) return;
-
-            var window = GetWindow<CreateTableWindow>();
+            var window = Utils.Find<CreateTableWindow>();
+            if(window == null) return;
+            
             var utilityStylesheet = Resources.Load<StyleSheet>("Stylesheets/Utility");
             var stylesheet = Resources.Load<StyleSheet>("Stylesheets/CreateTableWindow");
             try {
-                window.rootVisualElement.styleSheets.Add(utilityStylesheet);
-                window.rootVisualElement.styleSheets.Add(stylesheet);
+                window.AddStylesheet(utilityStylesheet);
+                window.AddStylesheet(stylesheet);
             } catch {
                 window.deferStylesheetLoading = true;
             }
         }
 
-        [SerializeReference] private LocalizationSettingsWindow owner;
         [SerializeReference] private LocalizationSettings settings;
         [SerializeField] private string tableName;
         private bool deferStylesheetLoading;
+        private Action onCreate;
 
         private void Initialize() {
             var utilityStylesheet = Resources.Load<StyleSheet>("Stylesheets/Utility");
             var stylesheet = Resources.Load<StyleSheet>("Stylesheets/CreateTableWindow");
-            rootVisualElement.styleSheets.Add(utilityStylesheet);
-            rootVisualElement.styleSheets.Add(stylesheet);
+            this.AddStylesheet(utilityStylesheet);
+            this.AddStylesheet(stylesheet);
             tableName = "";
         }
 
@@ -50,8 +50,8 @@ namespace UnityLocalization {
             if (deferStylesheetLoading) {
                 var utilityStylesheet = Resources.Load<StyleSheet>("Stylesheets/Utility");
                 var stylesheet = Resources.Load<StyleSheet>("Stylesheets/CreateTableWindow");
-                rootVisualElement.styleSheets.Add(utilityStylesheet);
-                rootVisualElement.styleSheets.Add(stylesheet);
+                this.AddStylesheet(utilityStylesheet);
+                this.AddStylesheet(stylesheet);
                 deferStylesheetLoading = false;
             }
             
@@ -85,7 +85,9 @@ namespace UnityLocalization {
 
             var cleanPath = savePath.Substring(Application.dataPath.LastIndexOf('/') + 1);
             settings.AddTable(tableName, cleanPath);
-            owner.UpdateTableFilter();
+            
+            Utils.DirtyTables(settings);
+            onCreate?.Invoke();
             Close();
         }
     }

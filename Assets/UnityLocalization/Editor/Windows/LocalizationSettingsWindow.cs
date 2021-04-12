@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 using UnityLocalization.Data;
 using UnityLocalization.Utility;
@@ -18,14 +14,13 @@ namespace UnityLocalization {
 
         [UnityEditor.Callbacks.DidReloadScripts]
         private static void Initialize() {
-            if (!HasOpenInstances<LocalizationSettingsWindow>()) return;
-
-            var window = GetWindow<LocalizationSettingsWindow>();
+            var window = Utils.Find<LocalizationSettingsWindow>();
+            if(window == null) return;
             var utilityStylesheet = Resources.Load<StyleSheet>("Stylesheets/Utility");
             var stylesheet = Resources.Load<StyleSheet>("Stylesheets/SettingsWindow");
             try {
-                window.rootVisualElement.styleSheets.Add(utilityStylesheet);
-                window.rootVisualElement.styleSheets.Add(stylesheet);
+                window.AddStylesheet(utilityStylesheet);
+                window.AddStylesheet(stylesheet);
             } catch {
                 window.deferStylesheetLoading = true;
             }
@@ -88,8 +83,8 @@ namespace UnityLocalization {
             if (deferStylesheetLoading) {
                 var utilityStylesheet = Resources.Load<StyleSheet>("Stylesheets/Utility");
                 var stylesheet = Resources.Load<StyleSheet>("Stylesheets/SettingsWindow");
-                rootVisualElement.styleSheets.Add(utilityStylesheet);
-                rootVisualElement.styleSheets.Add(stylesheet);
+                this.AddStylesheet(utilityStylesheet);
+                this.AddStylesheet(stylesheet);
                 deferStylesheetLoading = false;
             }
 
@@ -146,7 +141,7 @@ namespace UnityLocalization {
             var tablesFoldout = VisualElementFactory.Foldout("TableFoldout", "Tables", nameof(tablesFoldoutClosed), this, tablesFoldoutClosed, "themeTable");
             var createTableButton = VisualElementFactory.Create<Button>("CreateTable", "large").Do(self => {
                 self.text = "Create New Table";
-                self.clicked += () => CreateTableWindow.Display(Event.current.mousePosition + position.position + Vector2.up * 20, this, activeSettings.ActiveSettings);
+                self.clicked += () => CreateTableWindow.Display(Event.current.mousePosition + position.position + Vector2.up * 20, activeSettings.ActiveSettings);
             });
             var searchField = VisualElementFactory
                               .Create<ToolbarSearchField>("TablesSearchField", "searchField", "themeTable")
@@ -211,7 +206,7 @@ namespace UnityLocalization {
                 settings.RemoveLocale(selectedLocale);
                 Utils.SaveChanges();
                 selectedLocale = null;
-                UpdateFilter();
+                Utils.DirtyLocales(settings);
             }
 
             if (GUILayout.Button("Make Selected Default", GUILayout.Height(30))) {
@@ -219,6 +214,7 @@ namespace UnityLocalization {
                 settings.SetDefaultLocale(selectedLocale);
                 Utils.SaveChanges();
                 UpdateDefaultLocaleLabel();
+                Utils.DirtyLocales(settings);
             }
 
             GUI.enabled = true;
@@ -255,6 +251,7 @@ namespace UnityLocalization {
             GUILayout.BeginHorizontal(style_containerNoMarginTop);
 
             if (GUILayout.Button("Open Table Editor", GUILayout.Height(30))) {
+                TableEditorWindow.Display(settings);
             }
 
             if (selectedTable == null) GUI.enabled = false;
@@ -264,7 +261,7 @@ namespace UnityLocalization {
                     AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(selectedTable));
                     Utils.SaveChanges();
                     selectedTable = null;
-                    UpdateTableFilter();
+                    Utils.DirtyTables(settings);
                 }
             }
 
@@ -335,6 +332,14 @@ namespace UnityLocalization {
             filteredTables = settings.Tables.Where(table => table.TableName.ToLowerInvariant().Contains(tableSearchQuery.ToLowerInvariant()) ||
                                                             tableSearchQuery.ToLowerInvariant().Contains(table.TableName.ToLowerInvariant()))
                                      .ToList();
+        }
+
+        internal void OnTablesDirty() {
+            UpdateTableFilter();
+        }
+
+        internal void OnLocalesDirty() {
+            UpdateFilter();
         }
 
         private static void LoadStyles() {
