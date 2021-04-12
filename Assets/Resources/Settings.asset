@@ -24,4 +24,7 @@ MonoBehaviour:
   - localeCode: en-GB
     englishName: English (United Kingdom)
     nativeName: English (United Kingdom)
-  tables: []
+  tableGuids:
+  - 3c68df9b-9e53-4840-9b60-cc7208ee2b38
+  tables:
+  - {fileID: 11400000, guid: 8f7d80f516b913346944ca2cbcf585fa, type: 2}

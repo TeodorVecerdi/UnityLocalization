@@ -75,7 +75,7 @@ namespace UnityLocalization {
                     Utils.RecordChange(settings, "Added locale");
                     settings.AddLocale(locale);
                     Utils.SaveChanges();
-                    owner.UpdateFilter();
+                    Utils.DirtyLocales(settings);
                     UpdateFilter();
                 }
 

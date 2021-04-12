@@ -8,25 +8,26 @@ namespace UnityLocalization.Data {
         [SerializeField] private string tableName;
         [SerializeField] private Table table;
         public string TableName => tableName;
+        public List<LocalizationEntry> Entries => table.entries;
 
         internal void Initialize(string tableName, List<Locale> locales) {
             this.tableName = tableName;
             table = new Table(locales);
         }
 
-        internal void AddLocalization(string key) {
+        public void AddKey(string key) {
             table.AddLocalization(key);
         }
 
-        internal void UpdateKey(int row, string newKey) {
+        public void UpdateKey(int row, string newKey) {
             table.UpdateKey(row, newKey);
         }
         
-        internal void RemoveKey(int row) {
+        public void RemoveKey(int row) {
             table.RemoveKey(row);
         }
 
-        internal void UpdateLocalization(int row, int column, string value) {
+        public void UpdateLocalization(int row, int column, string value) {
             table.UpdateLocalization(row, column, value);
         }
 
