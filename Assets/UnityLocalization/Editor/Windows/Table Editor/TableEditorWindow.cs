@@ -124,7 +124,7 @@ namespace UnityLocalization {
 
             var scrollView = new ScrollView(ScrollViewMode.VerticalAndHorizontal);
             keyColumn = VisualElementFactory.Create<VisualElement>(null, "table-col");
-            keyColumn.Add(new TableCell("key", false));
+            keyColumn.AddGet(new TableCell("key", false)).AddToClassList("header");
 
             for (var i = 0; i < entries.Count; i++) {
                 keyColumn.Add(MakeKeyCell(table, entries[i].Key, i));
@@ -144,6 +144,7 @@ namespace UnityLocalization {
                 var isDefaultLocale = locale.Equals(settings.DefaultLocale);
                 var localeColumn = VisualElementFactory.Create<VisualElement>(null, "table-col");
                 localeColumn.Add(new TableCell($"{locale.EnglishName}{(isDefaultLocale ? " - Default" : "")}", false).Do(cell => {
+                    cell.AddToClassList("header");
                     if (isDefaultLocale) cell.AddToClassList("bold");
                 }));
                 for (var j = 0; j < entries.Count; j++) {
