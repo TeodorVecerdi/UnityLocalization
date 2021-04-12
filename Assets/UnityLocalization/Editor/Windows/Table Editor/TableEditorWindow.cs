@@ -67,6 +67,7 @@ namespace UnityLocalization {
             foreach (var table in tables) {
                 tabs.Add(tabContainer.AddGet(new Tab(table.TableName)).Do(tab => {
                     tab.Clicked += () => TabClicked(tab);
+                    tab.DeleteClicked += () => DeleteTable(tab.userData as LocalizationTable);
                     tab.userData = table;
                 }));
             }
@@ -93,6 +94,15 @@ namespace UnityLocalization {
             CreateTableWindow.Display(Event.current.mousePosition + position.position + Vector2.up * 20, settings, () => {
                 TabClicked(tabs[tabs.Count-1]);
             });
+        }
+        
+        private void DeleteTable(LocalizationTable table) {
+            if (EditorUtility.DisplayDialog("Confirm table removal", "This action cannot be undone. Are you sure you want to delete the table?", "Yes", "No")) {
+                settings.RemoveTable(table);
+                AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(table));
+                Utils.SaveChanges();
+                Utils.DirtyTables(settings);
+            }
         }
 
         private void TabClicked(Tab tab) {

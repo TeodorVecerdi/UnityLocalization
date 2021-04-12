@@ -81,6 +81,7 @@ $accent: #ff5050;
 }
 
 Tab {
+    flex-direction: row;
     justify-content: center;
     align-items: center;
 
@@ -98,15 +99,46 @@ Tab {
     &.active {
         background-color: $dark;
         border-top-color: $accent;
-
+    }
+    &.active {
         Label.tab-label {
-            //-unity-font-style: bold;
+            padding-right: 16px;
+        }
+        
+        Button.tab-delete-button {
+            position: absolute;
+            
+            right: 2px;
+            display: flex;
         }
     }
 
     Label.tab-label {
-        @include padding-x(12px);
+        @include padding-x(16px);
         -unity-text-align: middle-center;
+    }
+    
+    Button.tab-delete-button {
+        display: none;
+        
+        align-items: center;
+        justify-content: center;
+        margin: 2px 0 2px 2px;
+        height: 12px;
+        width: 12px;
+        
+        background-image: resource("delete");
+        -unity-background-image-tint-color: #6e6e6e;
+        background-color: transparent;
+        border-width: 0;
+
+        &:hover {
+            -unity-background-image-tint-color: #c4c4c4;
+        }
+
+        &:active {
+            -unity-background-image-tint-color: #d0d0d0;
+        }
     }
 }
 
