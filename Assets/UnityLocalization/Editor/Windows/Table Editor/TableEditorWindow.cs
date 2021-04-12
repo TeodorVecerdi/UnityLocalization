@@ -223,6 +223,10 @@ namespace UnityLocalization {
         internal void OnTablesDirty() {
             RecreateGUI();
         }
+        
+        internal void OnLocalesDirty() {
+            RecreateGUI();
+        }
 
         private void RecreateGUI() {
             rootVisualElement.Clear();

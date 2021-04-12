@@ -206,7 +206,7 @@ namespace UnityLocalization {
                 settings.RemoveLocale(selectedLocale);
                 Utils.SaveChanges();
                 selectedLocale = null;
-                UpdateFilter();
+                Utils.DirtyLocales(settings);
             }
 
             if (GUILayout.Button("Make Selected Default", GUILayout.Height(30))) {
@@ -214,6 +214,7 @@ namespace UnityLocalization {
                 settings.SetDefaultLocale(selectedLocale);
                 Utils.SaveChanges();
                 UpdateDefaultLocaleLabel();
+                Utils.DirtyLocales(settings);
             }
 
             GUI.enabled = true;
@@ -335,6 +336,10 @@ namespace UnityLocalization {
 
         internal void OnTablesDirty() {
             UpdateTableFilter();
+        }
+
+        internal void OnLocalesDirty() {
+            UpdateFilter();
         }
 
         private static void LoadStyles() {

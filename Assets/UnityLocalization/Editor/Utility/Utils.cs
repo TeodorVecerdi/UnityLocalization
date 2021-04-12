@@ -32,6 +32,13 @@ namespace UnityLocalization.Utility {
             if (tableEditor != null) tableEditor.OnTablesDirty();
             if (settingsEditor != null) settingsEditor.OnTablesDirty();
         }
+        
+        public static void DirtyLocales(LocalizationSettings settings) {
+            var tableEditor = FindMatching<TableEditorWindow>(window => window.settings == settings);
+            var settingsEditor = Find<LocalizationSettingsWindow>();
+            if (tableEditor != null) tableEditor.OnLocalesDirty();
+            if (settingsEditor != null) settingsEditor.OnLocalesDirty();
+        }
 
 
         public static T FindMatching<T>(Func<T, bool> predicate) where T : EditorWindow {

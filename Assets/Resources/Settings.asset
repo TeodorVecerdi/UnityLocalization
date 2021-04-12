@@ -26,7 +26,5 @@ MonoBehaviour:
     nativeName: English (United Kingdom)
   tableGuids:
   - 3c68df9b-9e53-4840-9b60-cc7208ee2b38
-  - ae8acf8f-8bc9-4b64-a366-0aaad7e3b498
   tables:
   - {fileID: 11400000, guid: 8f7d80f516b913346944ca2cbcf585fa, type: 2}
-  - {fileID: 11400000, guid: 3ad141468fa90dd4cbbfa52372e017f7, type: 2}
