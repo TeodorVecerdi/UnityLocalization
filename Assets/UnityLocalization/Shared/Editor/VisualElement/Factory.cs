@@ -27,6 +27,34 @@ namespace UnityLocalization.Shared {
             }
             return parent;
         }
+
+        public static T AddClasses<T>(this T element, params string[] classNames) where T : VisualElement {
+            foreach (var className in classNames) {
+                element.AddToClassList(className);
+            }
+            return element;
+        }
+
+        public static T RemoveClasses<T>(this T element, params string[] classNames) where T : VisualElement {
+            foreach (var className in classNames) {
+                element.RemoveFromClassList(className);
+            }
+            return element;
+        }
+
+        public static T ToggleClasses<T>(this T element, params string[] classNames) where T : VisualElement {
+            foreach (var className in classNames) {
+                element.ToggleInClassList(className);
+            }
+            return element;
+        }
+
+        public static T SetClass<T>(this T element, bool set, string className) where T : VisualElement {
+            if(set) element.AddToClassList(className);
+            else element.RemoveFromClassList(className);
+            return element;
+        }
+        
         public static T NthParent<T>(this VisualElement element, int n) where T : VisualElement {
             return element.NthParent(n) as T;
         }
