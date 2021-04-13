@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.EventSystems;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 
-namespace UnityLocalization {
+namespace UnityLocalization.Shared {
     public class TableCell : VisualElement {
         public string Text {
             get => text;

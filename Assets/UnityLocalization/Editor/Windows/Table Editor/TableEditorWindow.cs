@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityLocalization.Data;
+using UnityLocalization.Shared;
 using UnityLocalization.Utility;
 
 namespace UnityLocalization {
@@ -22,13 +23,9 @@ namespace UnityLocalization {
         private List<VisualElement> localeColumns;
         private TableCell createEntry;
 
-        private void OnEnable() {
-        }
-
         private void CreateGUI() {
             if (!stylesheetsLoaded) {
                 InitializeWindow(this);
-                OnEnable();
             }
 
             if (settings == null) {
@@ -123,7 +120,7 @@ namespace UnityLocalization {
             var entries = table.Entries;
 
             var scrollView = new ScrollView(ScrollViewMode.VerticalAndHorizontal);
-            keyColumn = VisualElementFactory.Create<VisualElement>(null, "table-col");
+            keyColumn = Factory.Create<VisualElement>(null, "table-col");
             keyColumn.AddGet(new TableCell("key", false)).AddToClassList("header");
 
             for (var i = 0; i < entries.Count; i++) {
@@ -142,7 +139,7 @@ namespace UnityLocalization {
                 var col = i;
                 var locale = locales[i];
                 var isDefaultLocale = locale.Equals(settings.DefaultLocale);
-                var localeColumn = VisualElementFactory.Create<VisualElement>(null, "table-col");
+                var localeColumn = Factory.Create<VisualElement>(null, "table-col");
                 localeColumn.Add(new TableCell($"{locale.EnglishName}{(isDefaultLocale ? " - Default" : "")}", false).Do(cell => {
                     cell.AddToClassList("header");
                     if (isDefaultLocale) cell.AddToClassList("bold");

@@ -5,6 +5,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityLocalization.Data;
+using UnityLocalization.Shared;
 using UnityLocalization.Utility;
 
 namespace UnityLocalization {
@@ -103,11 +104,11 @@ namespace UnityLocalization {
         }
 
         private Foldout CreateLocalesFoldout() {
-            var localesFoldout = VisualElementFactory.Foldout("LocaleFoldout", "Locales", nameof(localeFoldoutClosed), this, localeFoldoutClosed, "themeLocale", "firstOfType");
+            var localesFoldout = Factory.Foldout("LocaleFoldout", "Locales", nameof(localeFoldoutClosed), this, localeFoldoutClosed, "themeLocale", "firstOfType");
             defaultLocaleLabel = new Label {name = "DefaultLocale"};
             UpdateDefaultLocaleLabel();
 
-            var localesSearchField = VisualElementFactory
+            var localesSearchField = Factory
                                      .Create<ToolbarSearchField>("LocalesSearchField", "searchField", "themeLocale")
                                      .Q<TextField>()
                                      .Do(self => {
@@ -136,12 +137,12 @@ namespace UnityLocalization {
         }
 
         private Foldout CreateTablesFoldout() {
-            var tablesFoldout = VisualElementFactory.Foldout("TableFoldout", "Tables", nameof(tablesFoldoutClosed), this, tablesFoldoutClosed, "themeTable");
-            var createTableButton = VisualElementFactory.Create<Button>("CreateTable", "large").Do(self => {
+            var tablesFoldout = Factory.Foldout("TableFoldout", "Tables", nameof(tablesFoldoutClosed), this, tablesFoldoutClosed, "themeTable");
+            var createTableButton = Factory.Create<Button>("CreateTable", "large").Do(self => {
                 self.text = "Create New Table";
                 self.clicked += () => CreateTableWindow.Display(Event.current.mousePosition + position.position + Vector2.up * 20, activeSettings.ActiveSettings);
             });
-            var searchField = VisualElementFactory
+            var searchField = Factory
                               .Create<ToolbarSearchField>("TablesSearchField", "searchField", "themeTable")
                               .Q<TextField>()
                               .Do(self => {

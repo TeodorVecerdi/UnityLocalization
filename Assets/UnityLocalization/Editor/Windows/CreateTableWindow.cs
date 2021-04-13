@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UIElements;
 using UnityLocalization.Data;
+using UnityLocalization.Shared;
 using UnityLocalization.Utility;
 
 namespace UnityLocalization {
@@ -57,12 +58,12 @@ namespace UnityLocalization {
             
             var createTableButton = new Button(TriggerCreateTable) {text = "Create", name = "CreateTableButton"};
             createTableButton.SetEnabled(false);
-            VisualElementFactory.TextFieldWithPlaceholder("TableName", "Table Name", null, "Table name", null)
-                                .Do(self => {
-                                    self.BindProperty(new SerializedObject(this).FindProperty("tableName"));
-                                    self.RegisterValueChangedCallback(evt => { createTableButton.SetEnabled(!string.IsNullOrEmpty(evt.newValue)); });
-                                    rootVisualElement.Add(self);
-                                });
+            Factory.TextFieldWithPlaceholder("TableName", "Table Name", null, "Table name", null)
+                   .Do(self => {
+                       self.BindProperty(new SerializedObject(this).FindProperty("tableName"));
+                       self.RegisterValueChangedCallback(evt => { createTableButton.SetEnabled(!string.IsNullOrEmpty(evt.newValue)); });
+                       rootVisualElement.Add(self);
+                   });
             rootVisualElement.Add(createTableButton);
         }
 

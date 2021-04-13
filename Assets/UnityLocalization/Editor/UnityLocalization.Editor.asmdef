@@ -2,7 +2,8 @@
     "name": "UnityLocalization.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:663d4345337c3fb479a98180d4d897ab"
+        "GUID:663d4345337c3fb479a98180d4d897ab",
+        "GUID:23dbe437bff59b24ba2c520ac98d6fc9"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

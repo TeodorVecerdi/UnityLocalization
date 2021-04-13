@@ -5,7 +5,7 @@ using UnityEngine.Assertions;
 
 #nullable enable
 
-namespace UnityLocalization.Utility {
+namespace UnityLocalization.Shared {
     public class GUIStyleDescription {
         public TextAnchor? Alignment;
         public Int4? Border;

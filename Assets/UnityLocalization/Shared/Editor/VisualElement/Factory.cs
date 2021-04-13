@@ -3,8 +3,8 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
-namespace UnityLocalization.Utility {
-    public static class VisualElementFactory {
+namespace UnityLocalization.Shared {
+    public static class Factory {
         public static T Create<T>(string name = null, params string[] classNames) where T : VisualElement, new() {
             var t = new T {name = name};
             foreach (var className in classNames) {

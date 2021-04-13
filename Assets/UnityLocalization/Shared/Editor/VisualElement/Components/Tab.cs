@@ -1,8 +1,7 @@
 ﻿using System;
 using UnityEngine.UIElements;
-using UnityLocalization.Utility;
 
-namespace UnityLocalization {
+namespace UnityLocalization.Shared {
     public class Tab : VisualElement {
         public event Action Clicked;
         public event Action DeleteClicked;
