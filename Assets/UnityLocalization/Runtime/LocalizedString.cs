@@ -1,16 +1,17 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 using UnityLocalization.Data;
 
 namespace UnityLocalization.Runtime {
     public class LocalizedString : MonoBehaviour {
-        [SerializeField, HideInInspector] private LocalizationSettings settings;
-        [SerializeField, HideInInspector] private string key;
-        [SerializeField, HideInInspector] private LocalizationTable table;
-        [SerializeField, HideInInspector] private UnityEvent<string> setter;
+        public LocalizationSettings Settings;
+        [SerializeField] public string Key;
+        [SerializeField] public LocalizationTable Table;
+        [SerializeField] public UnityEvent<string> Setter;
         
         private void Reset() {
-            settings = ActiveLocalizationSettings.Load().ActiveSettings;
+            Settings = ActiveLocalizationSettings.Load().ActiveSettings;
         }
     }
 }

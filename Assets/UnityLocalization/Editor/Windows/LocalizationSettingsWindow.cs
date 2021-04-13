@@ -17,6 +17,7 @@ namespace UnityLocalization {
         private static void Initialize() {
             var window = Utils.Find<LocalizationSettingsWindow>();
             if(window == null) return;
+            
             var utilityStylesheet = Resources.Load<StyleSheet>("Stylesheets/Utility");
             var stylesheet = Resources.Load<StyleSheet>("Stylesheets/SettingsWindow");
             try {
@@ -28,7 +29,7 @@ namespace UnityLocalization {
         }
 
         [MenuItem("Localization/Settings Editor")]
-        private static void ShowWindow() {
+        public static void ShowWindow() {
             var window = GetWindow<LocalizationSettingsWindow>(typeof(Editor).Assembly.GetType("UnityEditor.InspectorWindow"));
             window.titleContent = new GUIContent("Localization Settings");
             window.Show();
@@ -270,9 +271,12 @@ namespace UnityLocalization {
         }
 
         private void ActiveSettingsChanged(LocalizationSettings newSettings) {
+            Utils.DirtySettings(newSettings);
+            
             if (newSettings != null) {
                 UpdateFilter(newSettings);
                 UpdateTableFilter(newSettings);
+                UpdateDefaultLocaleLabel(newSettings);
                 settingsContainer.RemoveFromClassList("hidden");
                 return;
             }
@@ -286,8 +290,9 @@ namespace UnityLocalization {
             EditorUtility.SetDirty(this);
         }
 
-        private void UpdateDefaultLocaleLabel() {
-            var defaultLocale = activeSettings == null || activeSettings.ActiveSettings == null ? null : activeSettings.ActiveSettings.DefaultLocale;
+        private void UpdateDefaultLocaleLabel(LocalizationSettings newSettings = null) {
+            var settings = newSettings != null ? newSettings : activeSettings.ActiveSettings;
+            var defaultLocale = settings == null ? null : settings.DefaultLocale;
 
             if (defaultLocale == null || string.IsNullOrEmpty(defaultLocale.LocaleCode)) {
                 defaultLocaleLabel.text = "Default Locale: No default locale selected";

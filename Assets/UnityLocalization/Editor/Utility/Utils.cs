@@ -40,13 +40,24 @@ namespace UnityLocalization.Utility {
             if (settingsEditor != null) settingsEditor.OnLocalesDirty();
         }
 
+        public static void DirtySettings(LocalizationSettings settings) {
+            var localizedStringEditors = FindAll<LocalizedStringEditor>();
+            foreach (var localizedStringEditor in localizedStringEditors) {
+                localizedStringEditor.OnSettingsDirty(settings);
+            }
+        }
 
-        public static T FindMatching<T>(Func<T, bool> predicate) where T : EditorWindow {
+
+        public static T FindMatching<T>(Func<T, bool> predicate) where T : Object {
             if (predicate == null) return Find<T>();
             return Resources.FindObjectsOfTypeAll<T>().FirstOrDefault(predicate);
         }
-        public static T Find<T>() where T : EditorWindow {
+        public static T Find<T>() where T : Object {
             return Resources.FindObjectsOfTypeAll<T>().FirstOrDefault();
+        }
+        
+        public static T[] FindAll<T>() where T : Object {
+            return Resources.FindObjectsOfTypeAll<T>();
         }
     }
 }
