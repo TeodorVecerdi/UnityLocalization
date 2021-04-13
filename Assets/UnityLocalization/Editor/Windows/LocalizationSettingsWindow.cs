@@ -36,12 +36,10 @@ namespace UnityLocalization {
         }
 
         private void OnEnable() {
-            activeSettings = ActiveLocalizationSettings.instance;
-            if (EditorPrefs.HasKey(Constants.ACTIVE_SETTINGS_PREFS_KEY)) {
-                activeSettings.ActiveSettings = AssetDatabase.LoadAssetAtPath<LocalizationSettings>(EditorPrefs.GetString(Constants.ACTIVE_SETTINGS_PREFS_KEY));
-            }
+            activeSettings = ActiveLocalizationSettings.Load();
 
             activeSettingsEditor = Editor.CreateEditor(activeSettings) as ActiveLocalizationSettingsEditor;
+            Debug.Assert(activeSettingsEditor != null);
             activeSettingsEditor.OnActiveSettingsChanged += ActiveSettingsChanged;
             Undo.undoRedoPerformed += UndoRedoPerformed;
             UpdateFilter();

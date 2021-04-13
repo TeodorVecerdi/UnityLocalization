@@ -84,7 +84,9 @@ namespace UnityLocalization {
             }
 
             var cleanPath = savePath.Substring(Application.dataPath.LastIndexOf('/') + 1);
-            settings.AddTable(tableName, cleanPath);
+            var table = settings.AddTable(tableName);
+            AssetDatabase.CreateAsset(table, cleanPath);
+            AssetDatabase.ImportAsset(cleanPath, ImportAssetOptions.ForceUpdate);
             
             Utils.DirtyTables(settings);
             onCreate?.Invoke();

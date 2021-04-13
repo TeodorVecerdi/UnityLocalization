@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityLocalization.Data;
+using UnityLocalization.Data.Utility;
 using UnityLocalization.Utility;
 
 namespace UnityLocalization {

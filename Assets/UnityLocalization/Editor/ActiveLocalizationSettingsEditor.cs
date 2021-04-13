@@ -4,6 +4,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityLocalization.Data;
+using UnityLocalization.Data.Utility;
 using UnityLocalization.Utility;
 
 namespace UnityLocalization {

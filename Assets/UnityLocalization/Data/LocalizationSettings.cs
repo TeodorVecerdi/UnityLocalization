@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 namespace UnityLocalization.Data {
@@ -44,13 +43,12 @@ namespace UnityLocalization.Data {
             }
         }
 
-        public void AddTable(string tableName, string path) {
+        public LocalizationTable AddTable(string tableName) {
             var table = CreateInstance<LocalizationTable>();
             table.Initialize(tableName, locales);
             tables.Add(table);
             tableGuids.Add(Guid.NewGuid().ToString());
-            AssetDatabase.CreateAsset(table, path);
-            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+            return table;
         }
 
         public void RemoveTable(LocalizationTable table) {
