@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityLocalization.Data;
-using UnityLocalization.Data.Utility;
+using UnityLocalization.Shared;
 using UnityLocalization.Utility;
 
 namespace UnityLocalization {

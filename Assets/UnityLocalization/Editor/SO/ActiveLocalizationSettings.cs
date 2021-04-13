@@ -1,8 +1,9 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using UnityLocalization.Data.Utility;
+using UnityLocalization.Data;
+using UnityLocalization.Shared;
 
-namespace UnityLocalization.Data {
+namespace UnityLocalization {
     public class ActiveLocalizationSettings : ScriptableSingleton<ActiveLocalizationSettings> {
         [SerializeField] private LocalizationSettings activeSettings;
         public LocalizationSettings ActiveSettings {
