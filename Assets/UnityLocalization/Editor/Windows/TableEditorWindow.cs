@@ -130,6 +130,10 @@ namespace UnityLocalization {
             createEntry.OnValueChanged += CreateEntry;
             createEntry.OnBeginEdit += field => { field.value = ""; };
             createEntry.OnCancelEdit += field => { createEntry.Text = "Add..."; };
+            createEntry.OnNextCellSelected += () => Schedule(0, () => GetCell(keyColumn.childCount - 3, 1)?.BeginEdit());
+            createEntry.OnPreviousCellSelected += () => Schedule(0, () => GetCell(keyColumn.childCount - 3, localeColumns.Count)?.BeginEdit());
+            createEntry.OnNextRowSelected += () => Schedule(0, () => createEntry.BeginEdit());
+            createEntry.OnPreviousRowSelected += () => Schedule(0, () => GetCell(keyColumn.childCount - 3, 0)?.BeginEdit());
             keyColumn.Add(createEntry);
 
             var locales = settings.Locales;
@@ -145,9 +149,7 @@ namespace UnityLocalization {
                 }));
                 for (var j = 0; j < entries.Count; j++) {
                     var row = j;
-                    localeColumn.Add(new TableCell(entries[row].Values[col], true).Do(cell => {
-                        cell.OnValueChanged += newValue => { table.UpdateLocalization(row, col, newValue); };
-                    }));
+                    localeColumn.Add(MakeCell(entries[row].Values[col], row, col, table));
                 }
 
                 // Add empty cell for Add entry cell
@@ -165,6 +167,41 @@ namespace UnityLocalization {
             tableElement.Add(scrollView);
             scrollView.Add(tableElement);
             tabContents.Add(scrollView);
+        }
+
+        private TableCell GetCell(int row, int col) {
+            var column = col == 0 ? keyColumn : col - 1 >= 0 && col - 1 < localeColumns.Count ? localeColumns[col - 1] : null;
+            if (column == null) return null;
+            if (row + 1 >= column.childCount) {
+                if (column == keyColumn) return createEntry;
+                return null;
+            }
+
+            var cell = column[row + 1] as TableCell;
+            return cell;
+        }
+
+        private (int row, int col) GetIndices(TableCell cell) {
+            int row = -1, col = -1;
+            if (keyColumn.Contains(cell)) col = 0;
+            for (var i = 0; i < localeColumns.Count; i++) {
+                if (localeColumns[i].Contains(cell)) {
+                    col = i + 1;
+                    row = localeColumns[i].IndexOf(cell) - 1;
+                    break;
+                }
+            }
+
+            return (row, col);
+        }
+
+        private void Schedule(int depth, Action action) {
+            if (depth == 0) {
+                rootVisualElement.schedule.Execute(action);
+                return;
+            }
+
+            rootVisualElement.schedule.Execute(() => Schedule(depth - 1, action));
         }
 
         private void CreateEntry(string key) {
@@ -188,13 +225,42 @@ namespace UnityLocalization {
             keyColumn.Insert(index, MakeKeyCell(table, key, index - 1));
             for (var i = 0; i < localeColumns.Count; i++) {
                 var col = i;
-                localeColumns[i].Insert(index, new TableCell("", true).Do(cell => { cell.OnValueChanged += newValue => { table.UpdateLocalization(index - 1, col, newValue); }; }));
+                localeColumns[i].Insert(index, MakeCell("", index - 1, col, table));
             }
+        }
+
+        private TableCell MakeCell(string value, int row, int col, LocalizationTable table) {
+            return new TableCell(value, true).Do(cell => {
+                cell.OnValueChanged += newValue => table.UpdateLocalization(row, col, newValue);
+                cell.OnNextCellSelected += () => {
+                    var nextCell = GetCell(row, col + 2) ?? GetCell(row + 1, 0);
+                    nextCell?.BeginEdit();
+                };
+                cell.OnPreviousCellSelected += () => GetCell(row, col)?.BeginEdit();
+                cell.OnNextRowSelected += () => {
+                    var nextRow = row + 1 < keyColumn.childCount - 2 ? GetCell(row + 1, col + 1) : GetCell(row + 1, 0);
+                    nextRow?.BeginEdit();
+                };
+                cell.OnPreviousRowSelected += () => {
+                    if (row == 0) return;
+                    GetCell(row - 1, col + 1)?.BeginEdit();
+                };
+            });
         }
 
         private TableCell MakeKeyCell(LocalizationTable table, string key, int row) {
             return new TableCell(key, true).Do(cell => {
                 cell.OnValueChanged += newKey => { table.UpdateKey(row, newKey); };
+                cell.OnNextCellSelected += () => GetCell(row, 1)?.BeginEdit();
+                cell.OnPreviousCellSelected += () => {
+                    if (row == 0) return;
+                    GetCell(row - 1, localeColumns.Count)?.BeginEdit();
+                };
+                cell.OnNextRowSelected += () => GetCell(row + 1, 0)?.BeginEdit();
+                cell.OnPreviousRowSelected += () => {
+                    if (row == 0) return;
+                    GetCell(row - 1, 0)?.BeginEdit();
+                };
                 cell.AddManipulator(new ContextualMenuManipulator(ctx => KeyContextMenu(ctx, table, row)));
             });
         }
