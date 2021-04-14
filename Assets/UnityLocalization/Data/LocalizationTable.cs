@@ -9,11 +9,7 @@ namespace UnityLocalization.Data {
         [SerializeField] private Table table;
         public string TableName => tableName;
         public List<LocalizationEntry> Entries => table.entries;
-
-        internal void Initialize(string tableName, List<Locale> locales) {
-            this.tableName = tableName;
-            table = new Table(locales);
-        }
+        public List<string> EntryGuids => table.entryGuids;
 
         public void AddKey(string key) {
             table.AddLocalization(key);
@@ -22,13 +18,24 @@ namespace UnityLocalization.Data {
         public void UpdateKey(int row, string newKey) {
             table.UpdateKey(row, newKey);
         }
-        
+
         public void RemoveKey(int row) {
             table.RemoveKey(row);
         }
 
         public void UpdateLocalization(int row, int column, string value) {
             table.UpdateLocalization(row, column, value);
+        }
+
+        public LocalizationEntry GuidToEntry(string guid) {
+            var index = table.entryGuids.IndexOf(guid);
+            if (index < 0) return null;
+            return table.entries[index];
+        }
+
+        internal void Initialize(string tableName, List<Locale> locales) {
+            this.tableName = tableName;
+            table = new Table(locales);
         }
 
         internal void OnLocaleAdded(Locale locale) {

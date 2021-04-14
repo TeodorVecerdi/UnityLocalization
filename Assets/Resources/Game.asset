@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0ab8b5ea5484cce8393f66c81b34324, type: 3}
+  m_Name: Game
+  m_EditorClassIdentifier: 
+  tableName: Game
+  table:
+    locales:
+    - localeCode: en-US
+      englishName: English
+      nativeName: English
+    entries:
+    - Key: tutorial_1
+      Values:
+      - Welcome to 'AMAZING GAME'!\nThe goal of this game is to get as much money
+        as you can in the shortest amount of time possible.
+    - Key: tutorial_2
+      Values:
+      - There are multiple types of buildings.\nEach building costs more than the
+        previous one, but gives you more money in the long run.
+    - Key: tutorial_3
+      Values:
+      - Start by placing down a <b>Wood Cutter Building</b>.
+    entryGuids:
+    - 97c684c1-efd2-48ad-ab2e-06c673665eef
+    - 9e680043-5519-473a-83da-40da6fba8c37
+    - 5b947442-3de9-4fdf-a8d2-93c5046a6bc1

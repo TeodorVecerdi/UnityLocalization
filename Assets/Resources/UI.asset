@@ -18,8 +18,8 @@ MonoBehaviour:
     - localeCode: en-US
       englishName: English
       nativeName: English
-    - localeCode: en-GB
-      englishName: English (United Kingdom)
-      nativeName: English (United Kingdom)
+    - localeCode: nl-NL
+      englishName: Dutch (Netherlands)
+      nativeName: Nederlands (Nederland)
     entries: []
     entryGuids: []

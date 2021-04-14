@@ -1,0 +1,6 @@
+﻿Marcmiquel, CC BY-SA 4.0 <https://creativecommons.org/licenses/by-sa/4.0>, via Wikimedia Commons
+https://commons.wikimedia.org/wiki/File:Language_icon.png
+
+Modifications:
+- changed color to white
+- resized to 128x128

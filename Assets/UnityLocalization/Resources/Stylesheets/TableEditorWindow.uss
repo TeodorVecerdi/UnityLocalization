@@ -1,0 +1,209 @@
+.hidden {
+  display: none;
+}
+
+.bold {
+  -unity-font-style: bold;
+}
+.bold.italic {
+  -unity-font-style: bold-and-italic;
+}
+
+.italic {
+  -unity-font-style: italic;
+}
+
+Label.placeholderLabel {
+  color: #5E5E5E;
+  font-size: 12px;
+  margin-top: 1px;
+  cursor: text;
+}
+
+Button {
+  border-radius: 0;
+  height: 24px;
+}
+Button.large {
+  height: 32px;
+}
+
+TextField.unity-base-field.unity-base-text-field.unity-text-field.textFieldWithPlaceholder {
+  min-height: 20px;
+}
+TextField.unity-base-field.unity-base-text-field.unity-text-field > TextInput {
+  border-radius: 0;
+}
+TextField.unity-base-field.unity-base-text-field.unity-text-field > TextInput:enabled {
+  border-color: #212121;
+}
+TextField.unity-base-field.unity-base-text-field.unity-text-field > TextInput:hover {
+  border-color: #656565;
+}
+TextField.unity-base-field.unity-base-text-field.unity-text-field > TextInput:focus {
+  border-color: #2386cd;
+}
+TextField.unity-base-field.unity-base-text-field.unity-text-field.breakLabel {
+  flex-wrap: wrap;
+}
+TextField.unity-base-field.unity-base-text-field.unity-text-field.breakLabel > Label {
+  flex-grow: 1;
+  padding-right: 20000px;
+  margin-bottom: 2px;
+}
+TextField.unity-base-field.unity-base-text-field.unity-text-field.noSpaceTextField > Label {
+  min-width: auto;
+  padding-right: 8px;
+}
+
+:root {
+  flex-direction: column;
+}
+:root > #TopContainer {
+  flex-direction: row;
+  background-color: #1b1b1b;
+}
+:root > #TopContainer > #TabContainer {
+  flex-grow: 1;
+}
+:root > #TopContainer > #TabContainer #unity-content-container.unity-scroll-view__content-container {
+  height: 24px;
+  flex-direction: row;
+}
+:root > #TopContainer > #TabContainer.no-tables #unity-content-container.unity-scroll-view__content-container {
+  display: none;
+}
+:root > #TopContainer > #CreateTableButton {
+  align-items: center;
+  justify-content: center;
+  margin: 2px 0 2px 2px;
+  height: 20px;
+  width: 20px;
+  background-color: #1b1b1b;
+  border-color: #1b1b1b;
+}
+:root > #TopContainer > #CreateTableButton:hover {
+  background-color: #3a3a3a;
+  border-color: #3a3a3a;
+}
+:root > #TopContainer > #CreateTableButton:active {
+  background-color: #4c4c4c;
+  border-color: #4c4c4c;
+}
+:root > #TopContainer > #CreateTableButton > #CreateTableButton-Image {
+  height: 10px;
+  width: 10px;
+  -unity-background-image-tint-color: #c4c4c4;
+  background-image: resource("plus-thin");
+}
+:root > #TabContents {
+  flex-grow: 1;
+  background-color: #3a3a3a;
+}
+:root > #TabContents.no-tables {
+  justify-content: center;
+}
+:root > #TabContents.no-tables Label#NoTablesLabel {
+  padding: 8px 0;
+  align-self: center;
+  font-size: 24px;
+}
+:root > #TabContents.no-tables Button#NoTablesButton {
+  padding: 24px 0;
+  align-self: center;
+  min-width: 200px;
+}
+:root > #TabContents .contents {
+  font-size: 40px;
+  -unity-text-align: middle-center;
+}
+
+Tab {
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-right: 2px;
+  min-width: 64px;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  border-top-width: 2px;
+  border-top-color: #1b1b1b;
+  border-bottom-width: 1px;
+  border-bottom-color: #1b1b1b;
+  background-color: #1b1b1b;
+}
+Tab.active {
+  background-color: #3a3a3a;
+  border-top-color: #ff5050;
+}
+Tab:hover Label.tab-label {
+  padding-right: 16px;
+}
+Tab:hover Button.tab-delete-button {
+  position: absolute;
+  right: 2px;
+  display: flex;
+}
+Tab Label.tab-label {
+  padding-left: 16px;
+  padding-right: 16px;
+  -unity-text-align: middle-center;
+}
+Tab Button.tab-delete-button {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  margin: 2px 0 2px 2px;
+  height: 12px;
+  width: 12px;
+  background-image: resource("delete");
+  -unity-background-image-tint-color: #6e6e6e;
+  background-color: transparent;
+  border-width: 0;
+}
+Tab Button.tab-delete-button:hover {
+  -unity-background-image-tint-color: #c4c4c4;
+}
+Tab Button.tab-delete-button:active {
+  -unity-background-image-tint-color: #d0d0d0;
+}
+
+.table {
+  flex-direction: row;
+}
+.table .table-col {
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+}
+.table .table-col .table-cell {
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  justify-content: center;
+  border-width: 1px;
+  border-color: #1b1b1b;
+  background-color: rgba(27, 27, 27, 0.3);
+  margin-left: -1px;
+  margin-top: -1px;
+  min-height: 28px;
+  min-width: 100px;
+}
+.table .table-col .table-cell > .table-cell-edit-field {
+  margin: -2px 0 -2px -1px;
+  padding: 0;
+}
+.table .table-col .table-cell#CreateEntryCell {
+  -unity-font-style: italic;
+}
+.table .table-col .table-cell#CreateEntryCell > Label.table-cell-label {
+  color: #ababab;
+}
+.table .table-col .table-cell.header {
+  background-color: rgba(27, 27, 27, 0.6);
+  border-bottom-color: #ff5050;
+  margin-bottom: 1px;
+}
+
+/*# sourceMappingURL=TableEditorWindow.uss.map */

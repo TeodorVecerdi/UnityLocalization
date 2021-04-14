@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0ab8b5ea5484cce8393f66c81b34324, type: 3}
+  m_Name: MainMenu
+  m_EditorClassIdentifier: 
+  tableName: MainMenu
+  table:
+    locales:
+    - localeCode: en-US
+      englishName: English
+      nativeName: English
+    entries:
+    - Key: play
+      Values:
+      - Play
+    - Key: options
+      Values:
+      - Options
+    - Key: quit
+      Values:
+      - Quit
+    entryGuids:
+    - 7202eef0-2462-4b2f-9688-ec06c8effe6b
+    - f8ce0216-92e2-455e-a422-c1ac892f3282
+    - ef6f2c76-3abd-4e3e-9bdd-8305b47379a2

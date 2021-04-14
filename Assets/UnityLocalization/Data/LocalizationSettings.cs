@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 namespace UnityLocalization.Data {
     [CreateAssetMenu(menuName = "Localization/Localization Settings", order = 0)]
     public class LocalizationSettings : ScriptableObject {
+        [SerializeReference] public LocalizationSettings ActiveSettings;
         [SerializeField] private bool tablesDirty;
         [SerializeField] private Locale defaultLocale;
         [SerializeField] private List<Locale> locales = new List<Locale>();
@@ -44,26 +44,46 @@ namespace UnityLocalization.Data {
             }
         }
 
-        public void AddTable(string tableName, string path) {
+        public LocalizationTable AddTable(string tableName) {
             var table = CreateInstance<LocalizationTable>();
             table.Initialize(tableName, locales);
             tables.Add(table);
             tableGuids.Add(Guid.NewGuid().ToString());
-            AssetDatabase.CreateAsset(table, path);
-            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+            return table;
         }
 
         public void RemoveTable(LocalizationTable table) {
             var tableIndex = tables.IndexOf(table);
-            if(tableIndex < 0) throw new ArgumentException("The specified table does not exist.");
-            
+            if (tableIndex < 0) throw new ArgumentException("The specified table does not exist.");
+
             tables.Remove(table);
             tableGuids.RemoveAt(tableIndex);
+        }
+
+        public int DefaultLocaleIndex() {
+            return locales.IndexOf(defaultLocale);
+        }
+
+        public int GuidToTableIndex(string guid) {
+            return tableGuids.IndexOf(guid);
+        }
+
+        public LocalizationTable GuidToTable(string guid) {
+            var index = GuidToTableIndex(guid);
+            if (index < 0) return null;
+            return tables[index];
+        }
+
+        public string GuidToTableName(string guid, string notFoundName = "Missing") {
+            var table = GuidToTable(guid);
+            if (table == null) return notFoundName ?? "Missing";
+            return table.TableName;
         }
 
         public Locale DefaultLocale => defaultLocale;
         public List<Locale> Locales => locales;
         public List<LocalizationTable> Tables => tables;
+        public List<string> TableGuids => tableGuids;
         public bool HasLocale(Locale locale) => locales.Contains(locale);
 
         public bool TablesDirty {

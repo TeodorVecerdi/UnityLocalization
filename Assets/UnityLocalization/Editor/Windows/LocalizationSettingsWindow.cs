@@ -5,6 +5,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityLocalization.Data;
+using UnityLocalization.Shared;
 using UnityLocalization.Utility;
 
 namespace UnityLocalization {
@@ -16,6 +17,7 @@ namespace UnityLocalization {
         private static void Initialize() {
             var window = Utils.Find<LocalizationSettingsWindow>();
             if(window == null) return;
+            
             var utilityStylesheet = Resources.Load<StyleSheet>("Stylesheets/Utility");
             var stylesheet = Resources.Load<StyleSheet>("Stylesheets/SettingsWindow");
             try {
@@ -27,7 +29,7 @@ namespace UnityLocalization {
         }
 
         [MenuItem("Localization/Settings Editor")]
-        private static void ShowWindow() {
+        public static void ShowWindow() {
             var window = GetWindow<LocalizationSettingsWindow>(typeof(Editor).Assembly.GetType("UnityEditor.InspectorWindow"));
             window.titleContent = new GUIContent("Localization Settings");
             window.Show();
@@ -36,13 +38,10 @@ namespace UnityLocalization {
         }
 
         private void OnEnable() {
-            activeSettings = ActiveLocalizationSettings.instance;
-            if (EditorPrefs.HasKey(Constants.ACTIVE_SETTINGS_PREFS_KEY)) {
-                activeSettings.ActiveSettings = AssetDatabase.LoadAssetAtPath<LocalizationSettings>(EditorPrefs.GetString(Constants.ACTIVE_SETTINGS_PREFS_KEY));
-            }
+            activeSettings = ActiveLocalizationSettings.Load();
 
             activeSettingsEditor = Editor.CreateEditor(activeSettings) as ActiveLocalizationSettingsEditor;
-            activeSettingsEditor.OnActiveSettingsChanged += ActiveSettingsChanged;
+            activeSettingsEditor!.OnActiveSettingsChanged += ActiveSettingsChanged;
             Undo.undoRedoPerformed += UndoRedoPerformed;
             UpdateFilter();
             UpdateTableFilter();
@@ -105,11 +104,11 @@ namespace UnityLocalization {
         }
 
         private Foldout CreateLocalesFoldout() {
-            var localesFoldout = VisualElementFactory.Foldout("LocaleFoldout", "Locales", nameof(localeFoldoutClosed), this, localeFoldoutClosed, "themeLocale", "firstOfType");
+            var localesFoldout = Factory.Foldout("LocaleFoldout", "Locales", nameof(localeFoldoutClosed), this, localeFoldoutClosed, "themeLocale", "firstOfType");
             defaultLocaleLabel = new Label {name = "DefaultLocale"};
             UpdateDefaultLocaleLabel();
 
-            var localesSearchField = VisualElementFactory
+            var localesSearchField = Factory
                                      .Create<ToolbarSearchField>("LocalesSearchField", "searchField", "themeLocale")
                                      .Q<TextField>()
                                      .Do(self => {
@@ -138,12 +137,12 @@ namespace UnityLocalization {
         }
 
         private Foldout CreateTablesFoldout() {
-            var tablesFoldout = VisualElementFactory.Foldout("TableFoldout", "Tables", nameof(tablesFoldoutClosed), this, tablesFoldoutClosed, "themeTable");
-            var createTableButton = VisualElementFactory.Create<Button>("CreateTable", "large").Do(self => {
+            var tablesFoldout = Factory.Foldout("TableFoldout", "Tables", nameof(tablesFoldoutClosed), this, tablesFoldoutClosed, "themeTable");
+            var createTableButton = Factory.Create<Button>("CreateTable", "large").Do(self => {
                 self.text = "Create New Table";
                 self.clicked += () => CreateTableWindow.Display(Event.current.mousePosition + position.position + Vector2.up * 20, activeSettings.ActiveSettings);
             });
-            var searchField = VisualElementFactory
+            var searchField = Factory
                               .Create<ToolbarSearchField>("TablesSearchField", "searchField", "themeTable")
                               .Q<TextField>()
                               .Do(self => {
@@ -271,9 +270,12 @@ namespace UnityLocalization {
         }
 
         private void ActiveSettingsChanged(LocalizationSettings newSettings) {
+            Utils.DirtySettings(newSettings);
+            
             if (newSettings != null) {
                 UpdateFilter(newSettings);
                 UpdateTableFilter(newSettings);
+                UpdateDefaultLocaleLabel(newSettings);
                 settingsContainer.RemoveFromClassList("hidden");
                 return;
             }
@@ -287,8 +289,9 @@ namespace UnityLocalization {
             EditorUtility.SetDirty(this);
         }
 
-        private void UpdateDefaultLocaleLabel() {
-            var defaultLocale = activeSettings == null || activeSettings.ActiveSettings == null ? null : activeSettings.ActiveSettings.DefaultLocale;
+        private void UpdateDefaultLocaleLabel(LocalizationSettings newSettings = null) {
+            var settings = newSettings != null ? newSettings : activeSettings.ActiveSettings;
+            var defaultLocale = settings == null ? null : settings.DefaultLocale;
 
             if (defaultLocale == null || string.IsNullOrEmpty(defaultLocale.LocaleCode)) {
                 defaultLocaleLabel.text = "Default Locale: No default locale selected";
