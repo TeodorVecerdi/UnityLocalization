@@ -85,6 +85,8 @@ namespace UnityLocalization {
                 var table = settings.GuidToTable(evt.newValue);
                 localizedString.TableGuid = evt.newValue;
                 localizedString.Table = table;
+                localizedString.Key = null;
+                localizedString.KeyGuid = null;
                 UpdateKeyVisibility();
             });
             rootSettingsContainer.Add(tableDropdown);
