@@ -46,16 +46,14 @@ namespace UnityLocalization {
             for (var index = 0; index < filteredEntries.Count; index++) {
                 var entry = filteredEntries[index];
                 var back = GUI.backgroundColor;
-                GUI.backgroundColor = index % 2 == 0 ? Color.white : new Color(0.07f, 0.07f, 0.07f);
                 GUILayout.BeginHorizontal("box");
-                GUI.backgroundColor = back;
-                GUILayout.Label($"{entry.Key} - {(string.IsNullOrEmpty(entry.Values[defaultLocaleIndex]) ? "NO VALUE SET" : entry.Values[defaultLocaleIndex])}");
-                GUILayout.FlexibleSpace();
-                if (GUILayout.Button("Select", GUILayout.MinWidth(100))) {
+                if (GUILayout.Button("Select", GUILayout.MinWidth(100), GUILayout.ExpandWidth(false))) {
                     owner.OnKeyDirty(index);
                     Close();
                 }
-
+                GUI.backgroundColor = index % 2 == 0 ? Color.white : new Color(0.07f, 0.07f, 0.07f);
+                GUI.backgroundColor = back;
+                GUILayout.Label($"{entry.Key} - {(string.IsNullOrEmpty(entry.Values[defaultLocaleIndex]) ? "NO VALUE SET" : entry.Values[defaultLocaleIndex])}");
                 GUILayout.EndHorizontal();
             }
 
