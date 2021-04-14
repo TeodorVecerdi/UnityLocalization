@@ -8,7 +8,12 @@ namespace UnityLocalization {
         [SerializeField] private LocalizationSettings activeSettings;
         public LocalizationSettings ActiveSettings {
             get => activeSettings;
-            set => activeSettings = value;
+            set {
+                activeSettings = value;
+                foreach (var localizationSettings in Resources.FindObjectsOfTypeAll<LocalizationSettings>()) {
+                    localizationSettings.ActiveSettings = value;
+                }
+            }
         }
 
         public static ActiveLocalizationSettings Load() {

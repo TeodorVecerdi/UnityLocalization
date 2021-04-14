@@ -21,10 +21,12 @@ MonoBehaviour:
   - localeCode: en-US
     englishName: English
     nativeName: English
-  - localeCode: en-GB
-    englishName: English (United Kingdom)
-    nativeName: English (United Kingdom)
+  - localeCode: nl-NL
+    englishName: Dutch (Netherlands)
+    nativeName: Nederlands (Nederland)
   tableGuids:
   - 3c68df9b-9e53-4840-9b60-cc7208ee2b38
+  - 8562d75b-2cb3-486b-8134-0215a260f65e
   tables:
   - {fileID: 11400000, guid: 8f7d80f516b913346944ca2cbcf585fa, type: 2}
+  - {fileID: 11400000, guid: 90dff40dab901c84c824b715c750dcdb, type: 2}

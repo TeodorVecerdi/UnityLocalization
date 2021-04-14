@@ -86,11 +86,12 @@ namespace UnityLocalization.Shared {
             return element;
         }
         
-        public static TextField TextFieldWithPlaceholder(string name, string label, string value, string placeholderText, string placeholderName) {
+        public static TextField TextFieldWithPlaceholder(string name, string label, string value, string placeholderText, string placeholderName, bool noSpace) {
             return Create<TextField>(name).Do(self => {
                 self.label = label;
                 self.value = value;
                 self.AddToClassList("textFieldWithPlaceholder");
+                self.SetClass(noSpace, "noSpaceTextField");
             }).Q("unity-text-input").AddGet<Label>(placeholderName, "placeholderLabel").Do(self => {
                 self.text = placeholderText;
                 if(!string.IsNullOrEmpty(value)) self.AddToClassList("hidden");

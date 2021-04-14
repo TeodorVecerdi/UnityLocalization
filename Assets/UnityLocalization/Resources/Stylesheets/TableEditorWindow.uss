@@ -51,7 +51,7 @@ TextField.unity-base-field.unity-base-text-field.unity-text-field.breakLabel > L
   padding-right: 20000px;
   margin-bottom: 2px;
 }
-TextField.unity-base-field.unity-base-text-field.unity-text-field > Label {
+TextField.unity-base-field.unity-base-text-field.unity-text-field.noSpaceTextField > Label {
   min-width: auto;
   padding-right: 8px;
 }
@@ -136,10 +136,10 @@ Tab.active {
   background-color: #3a3a3a;
   border-top-color: #ff5050;
 }
-Tab:hover.active Label.tab-label {
+Tab:hover Label.tab-label {
   padding-right: 16px;
 }
-Tab:hover.active Button.tab-delete-button {
+Tab:hover Button.tab-delete-button {
   position: absolute;
   right: 2px;
   display: flex;

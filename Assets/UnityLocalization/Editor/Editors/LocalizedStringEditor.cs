@@ -1,5 +1,10 @@
-﻿using UnityEditor;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UIElements;
 using UnityLocalization.Data;
 using UnityLocalization.Runtime;
@@ -10,29 +15,39 @@ namespace UnityLocalization {
     public class LocalizedStringEditor : Editor {
         // Properties //
         private SerializedProperty setterProperty;
+        private SerializedProperty keyProperty;
 
         // VisualElements //
         private VisualElement rootElement;
         private VisualElement activeSettingsWarning;
-        private VisualElement settingsContainer;
-        
+        private VisualElement rootSettingsContainer;
+        private VisualElement localizationSettingsContainer;
+        private VisualElement previewSettings;
+        private Button previewToggleButton;
+        private List<Button> previewButtons;
+
         // Other //
         private LocalizedString localizedString;
 
         private void OnEnable() {
             AcquireProperties();
             localizedString = target as LocalizedString;
-            Debug.Assert(localizedString != null);
-            localizedString.Settings = ActiveLocalizationSettings.Load().ActiveSettings;
-            
-            if(rootElement != null) UpdateWarningVisibility();
+            localizedString!.Settings = ActiveLocalizationSettings.Load().ActiveSettings;
+
+            if (rootElement != null) UpdateWarningVisibility();
         }
 
         public override VisualElement CreateInspectorGUI() {
-            
             rootElement = new VisualElement {name = "LocalizedString"};
 
-            if (PropertiesDirty()) AcquireProperties();
+            CreateGUI();
+            //4.  Preview?
+
+            return rootElement;
+        }
+
+        private void CreateGUI() {
+            AcquireProperties();
             LoadStylesheets();
 
             rootElement.AddGet<VisualElement>("Header").Do(selfHeader => {
@@ -49,40 +64,129 @@ namespace UnityLocalization {
                 self.AddGet(new Button(OpenSettingsWindow) {text = "Open Settings", name = "OpenSettingsButton"});
             });
 
-            settingsContainer = rootElement.AddGet<VisualElement>("SettingsContainer");
+            rootSettingsContainer = rootElement.AddGet<VisualElement>("SettingsContainer");
+
+            var settings = localizedString.Settings;
+            if (settings != null) {
+                CreateSettingsGUI(settings);
+            }
 
             UpdateWarningVisibility();
-            //1.  Active settings missing => message + button to open settings
-            // (how to do callback when active settings change) // Resources.FindObjectsOfTypeAll<LocalizedStringEditor>()
+            UpdateKeyVisibility();
+        }
 
-            //2.  Table selection
-            //3.  Key selection (dropdown? menu? window?)
-            //4.  Preview?
-
-            rootElement.schedule.Execute(() => {
-                var parent = rootElement.parent;
-                parent.AddStylesheet(Resources.Load<StyleSheet>("Stylesheets/LocalizedString_Parent"));
+        private void CreateSettingsGUI(LocalizationSettings settings) {
+            var tableChoices = settings.TableGuids.Prepend(Guid.Empty.ToString()).ToList();
+            var defaultIndex = settings.GuidToTableIndex(localizedString.TableGuid) + 1;
+            var tableDropdown = new PopupField<string>("Table", tableChoices, defaultIndex, guid => settings.GuidToTableName(guid, "None"),
+                                                       guid => settings.GuidToTableName(guid, "None"));
+            tableDropdown.name = "TableDropdown";
+            tableDropdown.RegisterValueChangedCallback(evt => {
+                var table = settings.GuidToTable(evt.newValue);
+                localizedString.TableGuid = evt.newValue;
+                localizedString.Table = table;
+                UpdateKeyVisibility();
             });
-            return rootElement;
+            rootSettingsContainer.Add(tableDropdown);
+            rootSettingsContainer.Add(localizationSettingsContainer = new VisualElement {name = "LocalizationSettingsContainer"});
+            localizationSettingsContainer.AddGet<VisualElement>("KeyContainer").Do(keyContainer => {
+                keyContainer.AddGet(new TextField("Key") {name = "LocalizationKey", isReadOnly = true}).Do(self => {
+                    self.SetEnabled(false);
+                    self.BindProperty(keyProperty);
+                });
+                keyContainer.AddGet(new Button(OnSelectKey) {text = "Select Key", name = "SelectKeyButton"});
+            });
+            localizationSettingsContainer.Add(new PropertyField(setterProperty).Do(field => {
+                field.RegisterValueChangeCallback(evt => {
+                    var count = localizedString.Setter.GetPersistentEventCount();
+                    for (var i = 0; i < count; i++) {
+                        localizedString.Setter.SetPersistentListenerState(i, UnityEventCallState.EditorAndRuntime);
+                    }
+                });
+            }));
+
+            // Preview section
+            if (localizedString.PreviewLocaleIndex == -1) localizedString.PreviewLocaleIndex = settings.DefaultLocaleIndex();
+
+            var previewContainer = localizationSettingsContainer.AddGet<VisualElement>("PreviewContainer");
+            previewContainer.AddGet(previewToggleButton = new Button(TogglePreview) {name = "TogglePreviewButton", text = "Preview"})
+                            .SetClass(localizedString.IsPreviewActive, "active");
+
+            previewButtons = new List<Button>();
+            previewSettings = previewContainer.AddGet<VisualElement>("PreviewSettings").SetClass(!localizedString.IsPreviewActive, "hidden");
+            previewSettings.AddGet(new ScrollView(ScrollViewMode.Horizontal) {name = "PreviewLocalesContainer"}).Do(container => {
+                for (var i = 0; i < settings.Locales.Count; i++) {
+                    var locale = settings.Locales[i];
+                    var localeIndex = i;
+                    previewButtons.Add(container.AddGet(
+                                           new Button(() => SetPreviewLocale(localeIndex)) {text = $"{locale.LocaleCode}"}
+                                               .SetClass(localeIndex == localizedString.PreviewLocaleIndex, "active")
+                                       )
+                    );
+                }
+            });
+            if (localizedString.IsPreviewActive) UpdatePreview();
         }
 
-        public void OnSettingsDirty(LocalizationSettings newSettings) {
-            localizedString.Settings = newSettings;
-            UpdateWarningVisibility();
+        private void TogglePreview() {
+            localizedString.IsPreviewActive = !localizedString.IsPreviewActive;
+            previewSettings.SetClass(!localizedString.IsPreviewActive, "hidden");
+            previewToggleButton.SetClass(localizedString.IsPreviewActive, "active");
+            if (localizedString.IsPreviewActive) UpdatePreview();
         }
 
-        private bool PropertiesDirty() {
-            return setterProperty == null;
+        private void UpdatePreview() {
+            localizedString.Translate(localizedString.PreviewLocaleIndex);
+            var count = localizedString.Setter.GetPersistentEventCount();
+            for (var i = 0; i < count; i++) {
+                EditorUtility.SetDirty(localizedString.Setter.GetPersistentTarget(i));
+            }
+        }
+
+        private void SetPreviewLocale(int index) {
+            previewButtons[localizedString.PreviewLocaleIndex].SetClass(false, "active");
+            localizedString.PreviewLocaleIndex = index;
+            previewButtons[localizedString.PreviewLocaleIndex].SetClass(true, "active");
+            UpdatePreview();
         }
 
         private void AcquireProperties() {
-            setterProperty = serializedObject.FindProperty("setter");
+            setterProperty = serializedObject.FindProperty("Setter");
+            keyProperty = serializedObject.FindProperty("Key");
         }
 
         private void UpdateWarningVisibility() {
             var showSettings = localizedString.Settings != null;
             activeSettingsWarning.SetClass(showSettings, "hidden");
-            settingsContainer.SetClass(!showSettings, "hidden");
+            rootSettingsContainer.SetClass(!showSettings, "hidden");
+        }
+
+        private void UpdateKeyVisibility() {
+            var show = localizedString.Table != null;
+            localizationSettingsContainer.SetClass(!show, "hidden");
+        }
+
+        public void OnSettingsDirty(LocalizationSettings newSettings) {
+            localizedString.Settings = newSettings;
+            rootElement.Clear();
+            CreateGUI();
+        }
+
+        private void OnSelectKey() {
+            SelectKeyWindow.Display(this, localizedString.Settings, localizedString.Table);
+        }
+
+        public void OnKeyDirty(int newKeyIndex) {
+            SetKeyIndex(newKeyIndex);
+            // TODO: Update view / preview etc
+        }
+
+        private void SetKeyIndex(int index) {
+            var entry = localizedString.Table.Entries[index];
+            var entryGuid = localizedString.Table.EntryGuids[index];
+
+            localizedString.Key = entry.Key;
+            localizedString.KeyGuid = entryGuid;
         }
 
         private void LoadStylesheets(StyleSheet utility = null, StyleSheet main = null) {

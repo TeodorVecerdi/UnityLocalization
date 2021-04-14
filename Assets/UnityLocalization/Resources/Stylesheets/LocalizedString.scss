@@ -1,18 +1,18 @@
-﻿@import "Utility";
-
-$dark: #3a3a3a;
-$darker: #1b1b1b;
-$accent: #ff5050;
+﻿@import "Theme";
+$defaultTheme: $table;
+$accent: $defaultTheme;
+@import "Utility";
 
 #LocalizedString {
-    margin-bottom: -6px;
-
     #Header {
+        margin-left: -15px;
+        margin-top: -3px;
+        margin-bottom: 2px;
+        padding-left: 12px;
+        
         flex-direction: row;
         align-items: center;
         height: 52px;
-        margin-bottom: 2px;
-        padding-left: 12px;
         
         border-bottom-width: 2px;
         border-top-width: 2px;
@@ -35,13 +35,11 @@ $accent: #ff5050;
     }
     
     #ActiveSettingsWarning {
-        
         #WarningContainer {
             margin-top: 8px;
             @include margin-x(8px);
             flex-direction: row;
             height: 24px;
-            //justify-content: center;
             align-items: center;
             
             .icon {
@@ -61,6 +59,44 @@ $accent: #ff5050;
         #OpenSettingsButton {
             margin: 8px;
             height: 32px;
+        }
+    }
+    
+    #SettingsContainer {
+        #LocalizationSettingsContainer {
+            margin-top: 8px;
+            #KeyContainer {
+                flex-direction: row;
+                margin-bottom: 4px;
+                #LocalizationKey {
+                    & > Label {
+                        align-self: center;
+                        min-width: auto;
+                        margin-right: 16px;
+                    }
+                    flex-grow: 1;
+                }
+                #SelectKeyButton {
+                    border-color: darken($accent, 5%);
+                }
+            }
+            
+            #PreviewContainer {
+                margin-top: 4px;
+                Button {
+                    border-width: 2px;
+                    border-color: $darker;
+                    &.active {
+                        border-color: darken($accent, 5%);
+                    }
+                }
+                
+                #PreviewSettings {
+                    #PreviewLocalesContainer {
+                        margin-top: 4px;
+                    }
+                }
+            }
         }
     }
 }

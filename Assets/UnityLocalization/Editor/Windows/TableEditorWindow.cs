@@ -116,8 +116,7 @@ namespace UnityLocalization {
             if (settings == null) return;
 
             var table = tab.userData as LocalizationTable;
-            Debug.Assert(table != null);
-            var entries = table.Entries;
+            var entries = table!.Entries;
 
             var scrollView = new ScrollView(ScrollViewMode.VerticalAndHorizontal);
             keyColumn = Factory.Create<VisualElement>(null, "table-col");
@@ -176,8 +175,7 @@ namespace UnityLocalization {
             }
 
             var selectedTable = tabs[activeTabIndex].userData as LocalizationTable;
-            Debug.Assert(selectedTable != null);
-            if (selectedTable.Entries.Any(entry => string.Equals(entry.Key, key, StringComparison.InvariantCulture)))
+            if (selectedTable!.Entries.Any(entry => string.Equals(entry.Key, key, StringComparison.InvariantCulture)))
                 return;
 
             CreateEntryImpl(selectedTable, key);

@@ -100,7 +100,7 @@ Tab {
         background-color: $dark;
         border-top-color: $accent;
     }
-    &:hover.active {
+    &:hover {
         Label.tab-label {
             padding-right: 16px;
         }

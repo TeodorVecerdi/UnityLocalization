@@ -41,8 +41,7 @@ namespace UnityLocalization {
             activeSettings = ActiveLocalizationSettings.Load();
 
             activeSettingsEditor = Editor.CreateEditor(activeSettings) as ActiveLocalizationSettingsEditor;
-            Debug.Assert(activeSettingsEditor != null);
-            activeSettingsEditor.OnActiveSettingsChanged += ActiveSettingsChanged;
+            activeSettingsEditor!.OnActiveSettingsChanged += ActiveSettingsChanged;
             Undo.undoRedoPerformed += UndoRedoPerformed;
             UpdateFilter();
             UpdateTableFilter();

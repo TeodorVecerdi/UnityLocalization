@@ -41,7 +41,7 @@ TextField.unity-base-field.unity-base-text-field.unity-text-field > TextInput:ho
   border-color: #656565;
 }
 TextField.unity-base-field.unity-base-text-field.unity-text-field > TextInput:focus {
-  border-color: #2386cd;
+  border-color: #ff5050;
 }
 TextField.unity-base-field.unity-base-text-field.unity-text-field.breakLabel {
   flex-wrap: wrap;
@@ -51,20 +51,19 @@ TextField.unity-base-field.unity-base-text-field.unity-text-field.breakLabel > L
   padding-right: 20000px;
   margin-bottom: 2px;
 }
-TextField.unity-base-field.unity-base-text-field.unity-text-field > Label {
+TextField.unity-base-field.unity-base-text-field.unity-text-field.noSpaceTextField > Label {
   min-width: auto;
   padding-right: 8px;
 }
 
-#LocalizedString {
-  margin-bottom: -6px;
-}
 #LocalizedString #Header {
+  margin-left: -15px;
+  margin-top: -3px;
+  margin-bottom: 2px;
+  padding-left: 12px;
   flex-direction: row;
   align-items: center;
   height: 52px;
-  margin-bottom: 2px;
-  padding-left: 12px;
   border-bottom-width: 2px;
   border-top-width: 2px;
   border-color: #ff5050;
@@ -104,6 +103,37 @@ TextField.unity-base-field.unity-base-text-field.unity-text-field > Label {
 #LocalizedString #ActiveSettingsWarning #OpenSettingsButton {
   margin: 8px;
   height: 32px;
+}
+#LocalizedString #SettingsContainer #LocalizationSettingsContainer {
+  margin-top: 8px;
+}
+#LocalizedString #SettingsContainer #LocalizationSettingsContainer #KeyContainer {
+  flex-direction: row;
+  margin-bottom: 4px;
+}
+#LocalizedString #SettingsContainer #LocalizationSettingsContainer #KeyContainer #LocalizationKey {
+  flex-grow: 1;
+}
+#LocalizedString #SettingsContainer #LocalizationSettingsContainer #KeyContainer #LocalizationKey > Label {
+  align-self: center;
+  min-width: auto;
+  margin-right: 16px;
+}
+#LocalizedString #SettingsContainer #LocalizationSettingsContainer #KeyContainer #SelectKeyButton {
+  border-color: #ff3737;
+}
+#LocalizedString #SettingsContainer #LocalizationSettingsContainer #PreviewContainer {
+  margin-top: 4px;
+}
+#LocalizedString #SettingsContainer #LocalizationSettingsContainer #PreviewContainer Button {
+  border-width: 2px;
+  border-color: #1b1b1b;
+}
+#LocalizedString #SettingsContainer #LocalizationSettingsContainer #PreviewContainer Button.active {
+  border-color: #ff3737;
+}
+#LocalizedString #SettingsContainer #LocalizationSettingsContainer #PreviewContainer #PreviewSettings #PreviewLocalesContainer {
+  margin-top: 4px;
 }
 
 /*# sourceMappingURL=LocalizedString.uss.map */

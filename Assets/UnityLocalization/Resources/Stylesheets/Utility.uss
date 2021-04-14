@@ -2,6 +2,17 @@
   display: none;
 }
 
+.bold {
+  -unity-font-style: bold;
+}
+.bold.italic {
+  -unity-font-style: bold-and-italic;
+}
+
+.italic {
+  -unity-font-style: italic;
+}
+
 Label.placeholderLabel {
   color: #5E5E5E;
   font-size: 12px;
@@ -40,7 +51,7 @@ TextField.unity-base-field.unity-base-text-field.unity-text-field.breakLabel > L
   padding-right: 20000px;
   margin-bottom: 2px;
 }
-TextField.unity-base-field.unity-base-text-field.unity-text-field > Label {
+TextField.unity-base-field.unity-base-text-field.unity-text-field.noSpaceTextField > Label {
   min-width: auto;
   padding-right: 8px;
 }

@@ -58,7 +58,7 @@ namespace UnityLocalization {
             
             var createTableButton = new Button(TriggerCreateTable) {text = "Create", name = "CreateTableButton"};
             createTableButton.SetEnabled(false);
-            Factory.TextFieldWithPlaceholder("TableName", "Table Name", null, "Table name", null)
+            Factory.TextFieldWithPlaceholder("TableName", "Table Name", null, "Table name", null, true)
                    .Do(self => {
                        self.BindProperty(new SerializedObject(this).FindProperty("tableName"));
                        self.RegisterValueChangedCallback(evt => { createTableButton.SetEnabled(!string.IsNullOrEmpty(evt.newValue)); });

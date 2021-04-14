@@ -10,16 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f0ab8b5ea5484cce8393f66c81b34324, type: 3}
-  m_Name: UI
+  m_Name: MainMenu
   m_EditorClassIdentifier: 
-  tableName: UI
+  tableName: MainMenu
   table:
     locales:
     - localeCode: en-US
       englishName: English
       nativeName: English
-    - localeCode: nl-NL
-      englishName: Dutch (Netherlands)
-      nativeName: Nederlands (Nederland)
-    entries: []
-    entryGuids: []
+    entries:
+    - Key: play
+      Values:
+      - Play
+    - Key: options
+      Values:
+      - Options
+    - Key: quit
+      Values:
+      - Quit
+    entryGuids:
+    - 7202eef0-2462-4b2f-9688-ec06c8effe6b
+    - f8ce0216-92e2-455e-a422-c1ac892f3282
+    - ef6f2c76-3abd-4e3e-9bdd-8305b47379a2
