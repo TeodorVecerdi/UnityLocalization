@@ -18,16 +18,22 @@ MonoBehaviour:
     - localeCode: en-US
       englishName: English
       nativeName: English
+    - localeCode: nl-NL
+      englishName: Dutch (Netherlands)
+      nativeName: Nederlands (Nederland)
     entries:
     - Key: play
       Values:
       - Play
-    - Key: options
+      - Speel
+    - Key: settings
       Values:
-      - Options
+      - Settings
+      - Instellingen
     - Key: quit
       Values:
       - Quit
+      - Afsluiten
     entryGuids:
     - 7202eef0-2462-4b2f-9688-ec06c8effe6b
     - f8ce0216-92e2-455e-a422-c1ac892f3282

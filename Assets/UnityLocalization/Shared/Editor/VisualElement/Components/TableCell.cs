@@ -13,6 +13,9 @@ namespace UnityLocalization.Shared {
         }
 
         public event Action OnNextCellSelected;
+        public event Action OnPreviousCellSelected;
+        public event Action OnNextRowSelected;
+        public event Action OnPreviousRowSelected;
         public event Action<string> OnValueChanged;
         public event Action<TextField> OnBeginEdit;
         public event Action<TextField> OnCancelEdit;
@@ -80,9 +83,13 @@ namespace UnityLocalization.Shared {
         private void OnKeyDown(KeyDownEvent evt) {
             if (evt.keyCode == KeyCode.Tab) {
                 OnFinishEdit(editField.value);
-                OnNextCellSelected?.Invoke();
-            } else if (evt.keyCode == KeyCode.Return)
+                if(evt.shiftKey) OnPreviousCellSelected?.Invoke();
+                else OnNextCellSelected?.Invoke();
+            } else if (evt.keyCode == KeyCode.Return) {
                 OnFinishEdit(editField.value);
+                if(evt.shiftKey) OnPreviousRowSelected?.Invoke();
+                else OnNextRowSelected?.Invoke();
+            }
             else if (evt.keyCode == KeyCode.Escape) {
                 OnFinishEdit(Text);
                 OnCancelEdit?.Invoke(editField);
