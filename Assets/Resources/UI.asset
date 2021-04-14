@@ -21,5 +21,30 @@ MonoBehaviour:
     - localeCode: nl-NL
       englishName: Dutch (Netherlands)
       nativeName: Nederlands (Nederland)
-    entries: []
-    entryGuids: []
+    entries:
+    - Key: tutorial
+      Values:
+      - Tutorial
+      - Tutorial
+    - Key: next
+      Values:
+      - Next
+      - Volgende
+    - Key: previous
+      Values:
+      - Previous
+      - Vorige
+    - Key: finish
+      Values:
+      - Finish
+      - Einde
+    - Key: back
+      Values:
+      - Back
+      - Terug
+    entryGuids:
+    - dfd1eb4c-f2e8-489e-9963-dbabc283bd65
+    - 0abae81e-1799-4b3e-b899-5f608137dfbb
+    - 7eed13de-14f1-4a36-b94b-0006ebe24921
+    - 20d7e87b-08d5-4254-aeb8-0e87f1e2895c
+    - c144a07a-4b69-4782-83af-b9bb4317ffc8

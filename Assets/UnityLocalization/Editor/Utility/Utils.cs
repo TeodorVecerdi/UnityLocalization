@@ -21,6 +21,11 @@ namespace UnityLocalization.Utility {
             Undo.RecordObject(obj, action);
         }
 
+        public static void ApplyChanges(Object obj) {
+            EditorUtility.SetDirty(obj);
+            SaveChanges();
+        }
+
         public static void SaveChanges() {
             AssetDatabase.Refresh();
             AssetDatabase.SaveAssets();

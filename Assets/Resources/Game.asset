@@ -18,19 +18,37 @@ MonoBehaviour:
     - localeCode: en-US
       englishName: English
       nativeName: English
+    - localeCode: nl-NL
+      englishName: Dutch (Netherlands)
+      nativeName: Nederlands (Nederland)
     entries:
     - Key: tutorial_1
       Values:
       - Welcome to 'AMAZING GAME'!\nThe goal of this game is to get as much money
         as you can in the shortest amount of time possible.
+      - 'Welkom bij ''GEWELDIG SPEL''!\nHet doel van dit spel is om zo veel mogelijk
+        geld binnen te halen in de kortst mogelijke tijd. '
     - Key: tutorial_2
       Values:
       - There are multiple types of buildings.\nEach building costs more than the
         previous one, but gives you more money in the long run.
+      - 'Er zijn meerdere soorten gebouwen.\nElk gebouw kost meer dan het vorige,
+        maar geeft je op de lange termijn meer geld. '
     - Key: tutorial_3
       Values:
-      - Start by placing down a <b>Wood Cutter Building</b>.
+      - Start by placing down a
+      - Begin met het neerzetten van een
+    - Key: wood_cutter
+      Values:
+      - wood cutter
+      - houthakkersgebouw
+    - Key: building
+      Values:
+      - building
+      - gebouw
     entryGuids:
     - 97c684c1-efd2-48ad-ab2e-06c673665eef
     - 9e680043-5519-473a-83da-40da6fba8c37
     - 5b947442-3de9-4fdf-a8d2-93c5046a6bc1
+    - 329acc80-291b-47e2-8eb6-776e0d77ba14
+    - 4e2b4c8c-5d6d-40f4-a4c5-5fa1dc86d185

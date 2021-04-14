@@ -222,6 +222,7 @@ namespace UnityLocalization {
             // skipping header and "Add..." cell
             var index = keyColumn.childCount - 1;
             table.AddKey(key);
+            Utils.ApplyChanges(table);
             keyColumn.Insert(index, MakeKeyCell(table, key, index - 1));
             for (var i = 0; i < localeColumns.Count; i++) {
                 var col = i;
@@ -231,7 +232,10 @@ namespace UnityLocalization {
 
         private TableCell MakeCell(string value, int row, int col, LocalizationTable table) {
             return new TableCell(value, true).Do(cell => {
-                cell.OnValueChanged += newValue => table.UpdateLocalization(row, col, newValue);
+                cell.OnValueChanged += newValue => {
+                    table.UpdateLocalization(row, col, newValue);
+                    Utils.ApplyChanges(table);
+                };
                 cell.OnNextCellSelected += () => {
                     var nextCell = GetCell(row, col + 2) ?? GetCell(row + 1, 0);
                     nextCell?.BeginEdit();
@@ -250,7 +254,10 @@ namespace UnityLocalization {
 
         private TableCell MakeKeyCell(LocalizationTable table, string key, int row) {
             return new TableCell(key, true).Do(cell => {
-                cell.OnValueChanged += newKey => { table.UpdateKey(row, newKey); };
+                cell.OnValueChanged += newKey => {
+                    table.UpdateKey(row, newKey);
+                    Utils.ApplyChanges(table);
+                };
                 cell.OnNextCellSelected += () => GetCell(row, 1)?.BeginEdit();
                 cell.OnPreviousCellSelected += () => {
                     if (row == 0) return;
@@ -268,6 +275,7 @@ namespace UnityLocalization {
         private void KeyContextMenu(ContextualMenuPopulateEvent ctx, LocalizationTable table, int row) {
             ctx.menu.AppendAction("Delete", action => {
                 table.RemoveKey(row);
+                Utils.ApplyChanges(table);
                 rootVisualElement.schedule.Execute(RecreateGUI);
             });
         }
