@@ -33,7 +33,13 @@ namespace UnityLocalization {
             AcquireProperties();
             localizedString = target as LocalizedString;
             localizedString!.Settings = ActiveLocalizationSettings.Load().ActiveSettings;
-
+            
+            // Update Setter mode to Editor & Runtime
+            var count = localizedString == null ? 0 : localizedString.Setter.GetPersistentEventCount();
+            for (var i = 0; i < count; i++) {
+                localizedString.Setter.SetPersistentListenerState(i, UnityEventCallState.EditorAndRuntime);
+            }
+            
             if (rootElement != null) UpdateWarningVisibility();
         }
 
@@ -41,7 +47,6 @@ namespace UnityLocalization {
             rootElement = new VisualElement {name = "LocalizedString"};
 
             CreateGUI();
-            //4.  Preview?
 
             return rootElement;
         }
@@ -87,6 +92,7 @@ namespace UnityLocalization {
                 localizedString.Table = table;
                 localizedString.Key = null;
                 localizedString.KeyGuid = null;
+                EditorUtility.SetDirty(localizedString);
                 UpdateKeyVisibility();
             });
             rootSettingsContainer.Add(tableDropdown);
@@ -189,6 +195,7 @@ namespace UnityLocalization {
 
             localizedString.Key = entry.Key;
             localizedString.KeyGuid = entryGuid;
+            EditorUtility.SetDirty(localizedString);
         }
 
         private void LoadStylesheets(StyleSheet utility = null, StyleSheet main = null) {
