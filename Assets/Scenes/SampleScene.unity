@@ -332,7 +332,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81402927b22ad6e4093b53f1a72932ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Locale: 
+  Locale: en-US
   localeIndex: 0
 --- !u!4 &13554911
 Transform:
@@ -1066,9 +1066,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Settings: {fileID: 11400000, guid: fe9a64f99f7ae734981adedf5486b45a, type: 2}
-  KeyGuid: f8ce0216-92e2-455e-a422-c1ac892f3282
-  Table: {fileID: 11400000, guid: 8f7d80f516b913346944ca2cbcf585fa, type: 2}
-  TableGuid: 3c68df9b-9e53-4840-9b60-cc7208ee2b38
+  KeyGuid: 360b1452-38d5-4956-97b6-4b011c8fe2ea
+  Table: {fileID: 11400000, guid: b1e23e6fd44677642b37545ad29664e1, type: 2}
+  TableGuid: 29af2b16-582c-4579-bbaa-3fbc23d6a722
   Setter:
     m_PersistentCalls:
       m_Calls:
@@ -2051,7 +2051,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: yeeeeeeeeeeeeeeeet
+  m_text: settings
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3897,7 +3897,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: yeet<sup>2</sup>
+  m_text: Play
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3984,9 +3984,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1617638974}
   - component: {fileID: 1617638977}
-  - component: {fileID: 1617638978}
   - component: {fileID: 1617638976}
   - component: {fileID: 1617638975}
+  - component: {fileID: 1617638978}
   m_Layer: 5
   m_Name: Play
   m_TagString: Untagged
@@ -4133,9 +4133,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Settings: {fileID: 11400000, guid: fe9a64f99f7ae734981adedf5486b45a, type: 2}
-  KeyGuid: 7202eef0-2462-4b2f-9688-ec06c8effe6b
-  Table: {fileID: 11400000, guid: 8f7d80f516b913346944ca2cbcf585fa, type: 2}
-  TableGuid: 3c68df9b-9e53-4840-9b60-cc7208ee2b38
+  KeyGuid: a1ee124c-7d3d-4abc-8188-3f215cbd34ab
+  Table: {fileID: 11400000, guid: b1e23e6fd44677642b37545ad29664e1, type: 2}
+  TableGuid: 29af2b16-582c-4579-bbaa-3fbc23d6a722
   Setter:
     m_PersistentCalls:
       m_Calls:
@@ -4289,9 +4289,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Settings: {fileID: 11400000, guid: fe9a64f99f7ae734981adedf5486b45a, type: 2}
-  KeyGuid: ef6f2c76-3abd-4e3e-9bdd-8305b47379a2
-  Table: {fileID: 11400000, guid: 8f7d80f516b913346944ca2cbcf585fa, type: 2}
-  TableGuid: 3c68df9b-9e53-4840-9b60-cc7208ee2b38
+  KeyGuid: f9aaad42-bff1-4bd9-9e52-2c9597a04d50
+  Table: {fileID: 11400000, guid: b1e23e6fd44677642b37545ad29664e1, type: 2}
+  TableGuid: 29af2b16-582c-4579-bbaa-3fbc23d6a722
   Setter:
     m_PersistentCalls:
       m_Calls:
@@ -5219,9 +5219,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Settings: {fileID: 11400000, guid: fe9a64f99f7ae734981adedf5486b45a, type: 2}
-  KeyGuid: f8ce0216-92e2-455e-a422-c1ac892f3282
-  Table: {fileID: 11400000, guid: 8f7d80f516b913346944ca2cbcf585fa, type: 2}
-  TableGuid: 3c68df9b-9e53-4840-9b60-cc7208ee2b38
+  KeyGuid: 360b1452-38d5-4956-97b6-4b011c8fe2ea
+  Table: {fileID: 11400000, guid: b1e23e6fd44677642b37545ad29664e1, type: 2}
+  TableGuid: 29af2b16-582c-4579-bbaa-3fbc23d6a722
   Setter:
     m_PersistentCalls:
       m_Calls:

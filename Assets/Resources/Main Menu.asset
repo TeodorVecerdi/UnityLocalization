@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f0ab8b5ea5484cce8393f66c81b34324, type: 3}
-  m_Name: MainMenu
+  m_Name: Main Menu
   m_EditorClassIdentifier: 
-  tableName: MainMenu
+  tableName: Main Menu
   table:
     locales:
     - localeCode: en-US
@@ -35,6 +35,6 @@ MonoBehaviour:
       - Quit
       - Afsluiten
     entryGuids:
-    - 7202eef0-2462-4b2f-9688-ec06c8effe6b
-    - f8ce0216-92e2-455e-a422-c1ac892f3282
-    - ef6f2c76-3abd-4e3e-9bdd-8305b47379a2
+    - a1ee124c-7d3d-4abc-8188-3f215cbd34ab
+    - 360b1452-38d5-4956-97b6-4b011c8fe2ea
+    - f9aaad42-bff1-4bd9-9e52-2c9597a04d50
