@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e266ca3b32b48588debf80bd064033c, type: 3}
   m_Name: Settings
   m_EditorClassIdentifier: 
+  ActiveSettings: {fileID: 11400000}
   tablesDirty: 0
   defaultLocale:
     localeCode: en-US
@@ -27,6 +28,8 @@ MonoBehaviour:
   tableGuids:
   - 3c68df9b-9e53-4840-9b60-cc7208ee2b38
   - 8562d75b-2cb3-486b-8134-0215a260f65e
+  - 26e626b6-926c-423b-a875-40e7c91c7dae
   tables:
   - {fileID: 11400000, guid: 8f7d80f516b913346944ca2cbcf585fa, type: 2}
   - {fileID: 11400000, guid: 90dff40dab901c84c824b715c750dcdb, type: 2}
+  - {fileID: 11400000, guid: 81a65ed74ad66d84998267196d244e4b, type: 2}
